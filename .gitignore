@@ -1,0 +1,7 @@
+.idea/
+.kdev4/
+*.kdev4
+.vscode/
+build/
+cmake-build-*/
+CMakeLists.txt.user
