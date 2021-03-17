@@ -52,6 +52,8 @@ if (HINDER_WITH_TESTS)
     enable_testing()
 endif ()
 
+add_subdirectory(src/misc)
+
 ################################################################################
 # install library and subprojects
 ################################################################################
