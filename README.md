@@ -47,18 +47,24 @@ If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. At the moment, the 
 See each subproject for the definitive list dependencies. However, here is a
 (possibly out-of-date) list:
 
-* Catch2 (when testing is enabled)
+* Catch2 (when testing is enabled; https://github.com/catchorg/Catch2)
 
 # Build Options
 
 See the main CMakeLists.txt or:
-
 ```bash
-cd <hinder_source_dir>
+cd <hinder_build_dir>
 cmake -L 2>/dev/null | grep HINDER
 ```
 
 However, here is a (possibly out-of-date) list:
+
+**HINDER_WITH_TESTS** Build tests when ON. [default = ON] 
+
+To use the above options with CMake, do the following from your build directory:
+```bash
+cmake -D<option>=ON|OFF <path_to_hinder_source> && make -j
+```
 
 # Helping
 
