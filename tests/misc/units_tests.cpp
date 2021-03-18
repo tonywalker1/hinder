@@ -24,32 +24,28 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_LITERALS_H
-#define HINDER_MISC_LITERALS_H
+#include <catch2/catch.hpp>
+#include <hinder/misc/units.h>
 
-#include <cstddef>
+using namespace hinder::misc;
 
-namespace hinder::misc::memory::literals {
+SCENARIO("specifying a memory block", "[misc_units]") {
+    THEN("the block size should be correct") {
+        // trivial, but let's check anyway
+        size_t block = 1;
+        CHECK(KiB(1) == block * 1024);
+        CHECK(MiB(1) == block * 1024 * 1024);
+        CHECK(GiB(1) == block * 1024 * 1024 * 1024);
+        CHECK(TiB(1) == block * 1024 * 1024 * 1024 * 1024);
 
-    // Generate size in bytes from size in KiB, MiB, or GiB.
-    // For example,
-    //     set_buffer(64_KiB);  // yields 64 * 1024 (or 65536) bytes
-    constexpr size_t operator"" _KiB(size_t val) {
-        return return val * 1024;  // 2^10
+        block = 4;
+        CHECK(KiB(4) == block * 1024);
+        CHECK(MiB(4) == block * 1024 * 1024);
+        CHECK(GiB(4) == block * 1024 * 1024 * 1024);
+        CHECK(TiB(4) == block * 1024 * 1024 * 1024 * 1024);
+
+        CHECK(MiB(4) == KiB(4) * 1024);
+        CHECK(GiB(4) == MiB(4) * 1024);
+        CHECK(TiB(4) == GiB(4) * 1024);
     }
-
-    constexpr size_t operator"" _MiB(size_t val) {
-        return val * 1048576;  // 2^20
-    }
-
-    constexpr size_t operator"" _GiB(size_t val) {
-        return val * 1073741824;  // 2^30
-    }
-
-    constexpr size_t operator"" _TiB(size_t val) {
-        return val * 1099511627776;  // 2^40
-    }
-
-}  // namespace hinder::misc::memory::literals
-
-#endif  // HINDER_MISC_LITERALS_H
+}

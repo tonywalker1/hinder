@@ -19,6 +19,11 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
+if (NOT CMAKE_CXX_STANDARD)
+    message(STATUS "CMAKE_CXX_STANDARD not set. Using C++ 17.")
+    set(CMAKE_CXX_STANDARD 17)
+endif ()
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -40,19 +45,17 @@ message(STATUS "************")
 ################################################################################
 # find dependencies
 ################################################################################
-if (HINDER_WITH_TESTS)
-    message(STATUS "Building with tests.")
-    find_package(Catch2 REQUIRED)
-endif ()
 
 ################################################################################
 # build subprojects
 ################################################################################
-if (HINDER_WITH_TESTS)
-    enable_testing()
-endif ()
-
 add_subdirectory(src/misc)
+
+if (HINDER_WITH_TESTS)
+    message(STATUS "Testing is enabled. Tests will be built.")
+    enable_testing()
+    add_subdirectory(tests/misc)
+endif ()
 
 ################################################################################
 # install library and subprojects
