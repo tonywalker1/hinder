@@ -31,7 +31,8 @@ or https://github.com/tonywalker1/hinder/tree/unstable/doc.
 
 ### C++ Standard
 
-If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. At the moment, the minimum is C++ 11.
+If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. 
+At the moment, the minimum I test/require is C++ 11.
 
 ### Compilers
 
@@ -44,22 +45,20 @@ If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. At the moment, the 
 
 # Dependencies
 
-See each subproject for the definitive list dependencies. However, here is a
-(possibly out-of-date) list:
+See CMakeLists.txt in each subproject for the definitive list dependencies. 
+However, here is a (possibly out-of-date) list:
 
-* Catch2 (when testing is enabled; https://github.com/catchorg/Catch2)
+**All subprojects:** 
+* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
+
+**exception:**
+* libfmt (Accepted for C++20; https://github.com/fmtlib/fmt)
 
 # Build Options
 
-See the main CMakeLists.txt or:
-```bash
-cd <hinder_build_dir>
-cmake -L 2>/dev/null | grep HINDER
-```
+See the main CMakeLists.txt. However, here is a (possibly out-of-date) list:
 
-However, here is a (possibly out-of-date) list:
-
-**HINDER_WITH_TESTS** Build tests when ON. [default = ON] 
+* **HINDER_WITH_TESTS** Build tests when ON. [default = ON] 
 
 To use the above options with CMake, do the following from your build directory:
 ```bash

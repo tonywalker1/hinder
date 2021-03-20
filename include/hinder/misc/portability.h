@@ -24,11 +24,11 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_LIKELY_H
-#define HINDER_MISC_LIKELY_H
+#ifndef HINDER_MISC_PORTABILITY_H
+#define HINDER_MISC_PORTABILITY_H
 
 // Yes, everyone has a version of this...now there are n + 1 versions.
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(likely)
+#if defined(__cplusplus) && (__cplusplus >= 202002L) && __has_cpp_attribute(likely)
     #define HINDER_LIKELY(cond)   (cond) [[likely]]
     #define HINDER_UNLIKELY(cond) (cond) [[unlikely]]
 #elif defined(__clang__) || defined(__GNUC__)
@@ -39,4 +39,11 @@
     #define HINDER_UNLIKELY(cond) (cond)
 #endif
 
-#endif  // HINDER_MISC_LIKELY_H
+// Make sure nodiscard is ignored on earlier compilers
+#if defined(__cplusplus) && (__cplusplus >= 201703L)
+    #define HINDER_NODISCARD [[nodiscard]]
+#else
+    #define HINDER_NODISCARD
+#endif
+
+#endif  // HINDER_MISC_PORTABILITY_H

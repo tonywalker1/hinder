@@ -4,7 +4,16 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(hinder LANGUAGES CXX)
 
-option(HINDER_WITH_TESTS "Build tests when ON (default = ON)" ON)
+################################################################################
+# project options
+################################################################################
+option(HINDER_WITH_TESTS "Build tests when ON [default = ON]" ON)
+
+option(HINDER_WITH_EXCEPTION_SOURCE "Append '@__FILE__:__LINE__' to exception message when ON [default = ON]" ON)
+if (HINDER_WITH_EXCEPTION_SOURCE)
+    add_definitions(-DHINDER_WITH_EXCEPTION_SOURCE)
+    message(STATUS "Enabling exception source (i.e., @__FILE__:__LINE__ will be appended to exceptin messages).")
+endif ()
 
 ################################################################################
 # global build settings
@@ -26,6 +35,8 @@ endif ()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(GNUInstallDirs)
 
@@ -49,11 +60,13 @@ message(STATUS "************")
 ################################################################################
 # build subprojects
 ################################################################################
+add_subdirectory(src/exception)
 add_subdirectory(src/misc)
 
 if (HINDER_WITH_TESTS)
     message(STATUS "Testing is enabled. Tests will be built.")
     enable_testing()
+    add_subdirectory(tests/exception)
     add_subdirectory(tests/misc)
 endif ()
 
@@ -64,4 +77,3 @@ install(
     FILES "${PROJECT_SOURCE_DIR}/cmake/hinderConfig.cmake"
     DESTINATION "lib/cmake/hinder"
 )
-
