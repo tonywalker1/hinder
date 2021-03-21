@@ -2,17 +2,15 @@
 
 A collection of useful C++ libraries.
 
-To *hinder* something is to make doing that thing more difficult. I chose this name because it is an antonym of *boost*:
-my favorite C++ library. Hopefully, hinder also boosts your productivity despite the play on words! ;-)
+To *hinder* something is to make doing that thing more difficult. I chose this name because it is an
+antonym of [boost](https://www.boost.org/): my favorite C++ library. Hopefully, hinder also boosts
+your productivity despite the play on words! :wink:
 
-# Contents
+# Documentation and Usage
 
-* **exception:** Simplifies creating new exceptions, testing pre-/post-conditions, asserting invariants, throwing/catching
-nested exceptions, and formatting error messages (using libfmt).
-
-* **misc:** An eclectic collection of useful code. 
-  * **likely:** Yet another implementation for likely and unlikely. 
-  * **units:** Useful conversions.
+See the the code for documentation and examples. Reading the code and comments really is the best
+way to learn and use this library. I prize clean, simple, readable code. However, there is general
+documentation in the [doc directory](./doc/contents.md).
 
 # Goals
 
@@ -21,18 +19,17 @@ nested exceptions, and formatting error messages (using libfmt).
 * Use the latest C++ standard, techniques, and practices.
 * Prefer the standard library, libraries on track for standardization, or Boost.
 
-# Usage
-
-See the the code for documentation and examples. Reading the code and comments really is the best way to learn and use
-this library. I prize clean, simple, readable code. However, I provide some general documentation in the doc directory
-or https://github.com/tonywalker1/hinder/tree/unstable/doc.
-
 # Compilers and Platforms
+
+I currently use C++17 on Debian 11 (Bullseye) and GCC 10.2 for most of my own work. This will be the
+most tested configuration. At-least by me. When Bullseye is released and becomes stable, this is
+what I will use until use until right before the next release (usually shortly before the first
+freeze).
 
 ### C++ Standard
 
-If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. 
-At the moment, the minimum I test/require is C++ 11.
+If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. At the moment, the minimum I
+test/require is C++11.
 
 ### Compilers
 
@@ -41,31 +38,31 @@ At the moment, the minimum I test/require is C++ 11.
 
 ### Platforms
 
-* Debian Stable (**What I use.** Also, the reference platform for all development.)
+* Debian Stable (The reference platform for all development.)
+
+See the [docker directory](./docker) for tools to build containers with everything you need to
+build this library. 
 
 # Dependencies
 
-See CMakeLists.txt in each subproject for the definitive list dependencies. 
-However, here is a (possibly out-of-date) list:
-
-**All subprojects:** 
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
-
-**exception:**
-* libfmt (Accepted for C++20; https://github.com/fmtlib/fmt)
+See CMakeLists.txt in each subproject for the definitive list dependencies or see the documentation
+in the [doc directory](./doc/contents.md).
 
 # Build Options
 
-See the main CMakeLists.txt. However, here is a (possibly out-of-date) list:
+See the main CMakeLists.txt or the [doc directory](./doc/contents.md) for each subproject. However,
+there is one global option:
 
-* **HINDER_WITH_TESTS** Build tests when ON. [default = ON] 
+* **HINDER_WITH_TESTS** Build tests when ON. [default = ON]
 
-To use the above options with CMake, do the following from your build directory:
+To use the option(s) with CMake, do the following from your build directory:
+
 ```bash
-cmake -D<option>=ON|OFF <path_to_hinder_source> && make -j
+cd <path_to_hinder_build_dir>
+cmake -D<option>=ON|OFF <path_to_hinder_source> && make -j && make install
 ```
 
 # Helping
 
-I would love suggestions, fixes, documentation, examples, and other contributions. I would also be interested in help
-supporting other platforms. Feel free to discuss additions/contributions with me.
+I would love suggestions, fixes, documentation, examples, and other contributions. I would also be
+interested in help supporting other platforms. Feel free to discuss additions/contributions with me.
