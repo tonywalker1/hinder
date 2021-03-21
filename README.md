@@ -2,37 +2,40 @@
 
 A collection of useful C++ libraries.
 
-To *hinder* something is to make doing that thing more difficult. I chose this name because it is an antonym of *boost*:
-my favorite C++ library. Hopefully, hinder also boosts your productivity despite the play on words! ;-)
+To *hinder* something is to make doing that thing more difficult. I
+chose this name because it is an antonym of *boost*: my favorite C++ library.
+Hopefully, hinder also boosts your productivity despite the play on words! ;-)
 
 # Contents
 
-* **exception:** Simplifies creating new exceptions, testing pre-/post-conditions, asserting invariants, throwing/catching
-nested exceptions, and formatting error messages (using libfmt).
+hinder is organized as a collection of standalone (or minimally interdependent)
+libraries that may be cloned and built as needed. See all of the hinder_*
+repositories. This may be useful if you only need some of the libraries and do
+not want to install all of the necessary dependencies for the libraries you
+do not need (e.g., building/running in a container).
 
-* **misc:** An eclectic collection of useful code. 
-  * **likely:** Yet another implementation for likely and unlikely. 
-  * **units:** Useful conversions.
+HOWEVER, if you do want to build every hinder library, this repository is for
+you. The repository will pull (as a git submodule) and build the entire set
+of hinder_* libraries.
+
+See the code for a definitive list, but this repository currently pulls and
+builds:
+* hinder_exception
 
 # Goals
 
-* Easy to use but hard to misuse.
-* High performance but clear, simple, and clean.
 * Use the latest C++ standard, techniques, and practices.
 * Prefer the standard library, libraries on track for standardization, or Boost.
 
 # Usage
 
-See the the code for documentation and examples. Reading the code and comments really is the best way to learn and use
-this library. I prize clean, simple, readable code. However, I provide some general documentation in the doc directory
-or https://github.com/tonywalker1/hinder/tree/unstable/doc.
+See the the code for documentation and examples.
 
 # Compilers and Platforms
 
-### C++ Standard
-
-If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. 
-At the moment, the minimum I test/require is C++ 11.
+Each hinder_* library has different requirements: some will compile with
+std=c++11 while others require C++17 (for example). See each library for
+specific requirements. At a minimum, the following is what I try to support.
 
 ### Compilers
 
@@ -41,31 +44,20 @@ At the moment, the minimum I test/require is C++ 11.
 
 ### Platforms
 
-* Debian Stable (**What I use.** Also, the reference platform for all development.)
+* Linux
+    * Debian (stable)
+    * Ubuntu (latest)
 
 # Dependencies
 
-See CMakeLists.txt in each subproject for the definitive list dependencies. 
-However, here is a (possibly out-of-date) list:
-
-**All subprojects:** 
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
-
-**exception:**
-* libfmt (Accepted for C++20; https://github.com/fmtlib/fmt)
+See each hinder_* library for specific dependencies.
 
 # Build Options
 
-See the main CMakeLists.txt. However, here is a (possibly out-of-date) list:
-
-* **HINDER_WITH_TESTS** Build tests when ON. [default = ON] 
-
-To use the above options with CMake, do the following from your build directory:
-```bash
-cmake -D<option>=ON|OFF <path_to_hinder_source> && make -j
-```
+See each hinder_* library for specific options.
 
 # Helping
 
-I would love suggestions, fixes, documentation, examples, and other contributions. I would also be interested in help
-supporting other platforms. Feel free to discuss additions/contributions with me.
+I would love suggestions, fixes, documentation, examples, and other
+contributions. I would also be interested in help supporting other platforms.
+Feel free to discuss additions/contributions with me.
