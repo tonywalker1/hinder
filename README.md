@@ -2,40 +2,34 @@
 
 A collection of useful C++ libraries.
 
-To *hinder* something is to make doing that thing more difficult. I
-chose this name because it is an antonym of *boost*: my favorite C++ library.
-Hopefully, hinder also boosts your productivity despite the play on words! ;-)
+To *hinder* something is to make doing that thing more difficult. I chose this name because it is an
+antonym of [boost](https://www.boost.org/): my favorite C++ library. Hopefully, hinder also boosts
+your productivity despite the play on words! :wink:
 
-# Contents
+# Documentation and Usage
 
-hinder is organized as a collection of standalone (or minimally interdependent)
-libraries that may be cloned and built as needed. See all of the hinder_*
-repositories. This may be useful if you only need some of the libraries and do
-not want to install all of the necessary dependencies for the libraries you
-do not need (e.g., building/running in a container).
-
-HOWEVER, if you do want to build every hinder library, this repository is for
-you. The repository will pull (as a git submodule) and build the entire set
-of hinder_* libraries.
-
-See the code for a definitive list, but this repository currently pulls and
-builds:
-* hinder_exception
+See the the code for documentation and examples. Reading the code and comments really is the best
+way to learn and use this library. I prize clean, simple, readable code. However, there is general
+documentation in the [doc directory](./doc/contents.md).
 
 # Goals
 
+* Easy to use but hard to misuse.
+* High performance but clear, simple, and clean.
 * Use the latest C++ standard, techniques, and practices.
 * Prefer the standard library, libraries on track for standardization, or Boost.
 
-# Usage
-
-See the the code for documentation and examples.
-
 # Compilers and Platforms
 
-Each hinder_* library has different requirements: some will compile with
-std=c++11 while others require C++17 (for example). See each library for
-specific requirements. At a minimum, the following is what I try to support.
+I currently use C++17 on Debian 11 (Bullseye) and GCC 10.2 for most of my own work. This will be the
+most tested configuration. At-least by me. When Bullseye is released and becomes stable, this is
+what I will use until use until right before the next release (usually shortly before the first
+freeze).
+
+### C++ Standard
+
+If you do not set CMAKE_CXX_STANDARD, the default is C++ 17. At the moment, the minimum I
+test/require is C++11.
 
 ### Compilers
 
@@ -44,20 +38,32 @@ specific requirements. At a minimum, the following is what I try to support.
 
 ### Platforms
 
-* Linux
-    * Debian (stable)
-    * Ubuntu (latest)
+* Debian Stable (The reference platform for all development.)
+
+See the [docker directory](./docker) for tools to build containers with everything you need to
+build this library. 
 
 # Dependencies
 
-See each hinder_* library for specific dependencies.
+See CMakeLists.txt in each subproject for the definitive list dependencies or see the documentation
+in the [doc directory](./doc/contents.md).
 
 # Build Options
 
-See each hinder_* library for specific options.
+See the main CMakeLists.txt or the [doc directory](./doc/contents.md) for each subproject. However,
+there is one global option:
+
+* **HINDER_WITH_TESTS** Build tests when ON. [default = ON]
+
+To use the option(s) with CMake, do the following from your build directory:
+
+```bash
+cd <path_to_hinder_build_dir>
+cmake -D<option>=ON|OFF <path_to_hinder_source> && make -j && make install
+```
 
 # Helping
 
-I would love suggestions, fixes, documentation, examples, and other
-contributions. I would also be interested in help supporting other platforms.
-Feel free to discuss additions/contributions with me.
+I would love suggestions, fixes, documentation, examples, and other contributions. I would also be
+interested in help supporting other platforms. Feel free to discuss additions/contributions with me.
+
