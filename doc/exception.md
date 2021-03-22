@@ -1,4 +1,4 @@
-# exception
+# hinder::exception
 
 Simplifies:
 
