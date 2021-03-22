@@ -1,0 +1,12 @@
+Checks: >-
+    boost-*,
+    bugprone-*,
+    cert-*,
+    cppcoreguidelines-*,
+    hicpp-*,
+    llvm-*,
+    misc-*,
+    modernize-*,
+    performance-*,
+    portability-*,
+    readability-*
