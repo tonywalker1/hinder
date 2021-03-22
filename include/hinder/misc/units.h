@@ -51,7 +51,7 @@ namespace hinder {
             return val * 1099511627776;  // 2^40
         }
 
-    } // namespace misc
-} // namespace hinder
+    }  // namespace misc
+}  // namespace hinder
 
 #endif  // HINDER_MISC_UNITS_H

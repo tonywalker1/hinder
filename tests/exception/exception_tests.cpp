@@ -86,9 +86,7 @@ SCENARIO("using nested exceptions", "[exception]") {
 
 SCENARIO("using the assertion macros", "[exception]") {
     THEN("the exception should be thrown") {
-        CHECK_THROWS_AS(
-            HINDER_INVARIANT(0 == 1, generic_error, "the answer is 42"),
-            generic_error);
+        CHECK_THROWS_AS(HINDER_INVARIANT(0 == 1, generic_error, "the answer is 42"), generic_error);
         CHECK_THROWS_AS(HINDER_EXPECTS(0 == 1, generic_error, "the answer is 42"), generic_error);
         CHECK_THROWS_AS(HINDER_ENSURES(0 == 1, generic_error, "the answer is 42"), generic_error);
     }
