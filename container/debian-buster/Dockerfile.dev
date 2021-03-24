@@ -24,8 +24,9 @@ FROM debian:buster
 
 WORKDIR /hinder
 
-ADD bashrc                          /root/.bashrc
-ADD setup.sh                        /hinder/setup.sh
+ADD bashrc                      /root/.bashrc
+ADD setup.sh                    /hinder/setup.sh
+ADD rebuild-debian-buster.sh    /usr/local/bin/rebuild-all.sh
 
 RUN /hinder/setup.sh
 

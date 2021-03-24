@@ -38,9 +38,11 @@ test/require is C++11.
 
 * Clang
     * 11.0.1 (Debian Bullseye)
+    * 10.0.0 (Ubuntu Focal LTS)
     * 7.0.1 (Debian Buster)
 * GCC
     * 10.2.1 (Debian Bullseye)
+    * 9.3.0 (Ubuntu Focal LTS)
     * 8.3.0 (Debian Buster)
 
 ### Platforms
@@ -49,6 +51,7 @@ test/require is C++11.
   * Debian
     * Debian 10 (Buster)
     * Debian 11 (Bullseye)
+  * Ubuntu 20.04 (Focal; LTS)
 
 See the [container directory](./container) for tools to create containers (via Docker or Podman)
 with everything you need to build this library. If you have trouble building this library on your

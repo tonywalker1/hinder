@@ -26,6 +26,9 @@
 ROOT_DIR=/hinder
 set -ex
 
+export TZ=Etc/UTC
+export DEBIAN_FRONTEND="noninteractive"
+
 apt-get update
 
 apt-get install -y --no-install-recommends \

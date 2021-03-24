@@ -58,8 +58,8 @@ ll /build  # will be empty on your first run
 # you can build and test all configurations for this container
 # note: this script will create a lot of subdirectories and build every configuration for gcc 
 #       and clang
-cd container
-./rebuild-debian-bullseye.sh
+# rebuild-all.sh is copied to the container image when it is built (/usr/local/bin/rebuild-all.sh)
+rebuild-all.sh
 
 # or, you can build with your own config
 cd /build
@@ -68,5 +68,5 @@ make -j
 ctest
 ```
 
-Have fun!
+**Have fun!**
 
