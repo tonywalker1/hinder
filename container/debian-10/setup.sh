@@ -41,6 +41,7 @@ apt-get install -y --no-install-recommends \
     libfmt-dev \
     make
 
+touch /etc/hinder_container.conf
 
 # install Catch2
 SCRATCH_DIR=/tmp/build_scratch

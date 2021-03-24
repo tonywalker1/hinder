@@ -1,8 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # MIT License
 #
-# Copyright (c) 2019 - 2021 Tony Walker
+# Copyright (c) 2019-2021 Tony Walker
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,48 +22,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# detect and set path to container config
-if [ -z $1 ]; then
-    echo "build_container.sh <path_to_config>"
-    echo "Usage Example:"
-    echo "  build_container.sh debian-10"
-    exit 1
-fi
-NAME="$1"
-DIR="$1"
-VOL="hinder_build"
-IMG="hinder-$NAME"
+# build the docker image
+ROOT_DIR=/hinder
+set -ex
 
-# detect and set tool (podman/docker) config
-if [ -n $(which podman) ]; then
-    echo "* Using podman"
-    TOOL=podman
-elif [ -n $(which docker) ]; then
-    echo "* Using docker"
-    TOOL=docker
-else
-    echo "build_container.sh error:"
-    echo "  podman or docker must be installed to build containers"
-fi
+apt-get update
 
-cd $DIR
+apt-get install -y --no-install-recommends \
+    ca-certificates \
+    catch2 \
+    clang \
+    clang-format \
+    clang-tidy \
+    clang-tools \
+    cmake \
+    g++ \
+    gcc \
+    git \
+    libfmt-dev \
+    make
 
-# create volume if needed
-if $TOOL volume inspect "$VOL" >/dev/null 2>&1; then
-    echo "* Found existing $VOL volume"
-else
-    echo "* Creating $VOL volume"
-    $TOOL volume create "$VOL"
-fi
+touch /etc/hinder_container.conf
 
-#remove existing image if needed
-if podman image exists "$IMG"; then
-    echo "* Removing existing image $IMG"
-    $TOOL rmi "$IMG"
-fi
-
-# build image
-echo "* Building the image..."
-$TOOL build --tag "hinder-$NAME" --file ./Dockerfile.dev .
-
-cd ..
+# clean-up
+rm -rf /var/lib/apt/lists/*
+rm -f  $ROOT_DIR/setup.sh

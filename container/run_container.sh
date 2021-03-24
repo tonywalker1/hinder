@@ -22,15 +22,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# detect and set path to container config
+# set path to container config
 if [ -z $1 ]; then
-    echo "run_container.sh <container_name>"
+    echo "run_container.sh <container_name> <path_to_src>"
     echo "Usage Example:"
-    echo "  run_container.sh hinder-debian-10"
+    echo "  run_container.sh hinder-debian-10 .."
     exit 1
 fi
 NAME="$1"
 VOL="hinder_build"
+
+# set path to hinder source
+if [ -z $2 ]; then
+    echo "run_container.sh <container_name> <path_to_src>"
+    echo "Usage Example:"
+    echo "  run_container.sh hinder-debian-10 .."
+    exit 1
+fi
+SRC="$2"
 
 # detect and set tool (podman/docker) config
 if [ -n $(which podman) ]; then
@@ -44,9 +53,10 @@ else
     echo "  podman or docker must be installed to build containers"
 fi
 
+# finally, build the container
 $TOOL run \
     --rm \
     -ti \
-    --mount type=bind,source="$(pwd)/..",target=/hinder \
+    --mount type=bind,source="$SRC",target=/hinder \
     --mount type=volume,source="$VOL",target=/build \
-    $NAME
+    "hinder-$NAME"

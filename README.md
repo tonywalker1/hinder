@@ -7,8 +7,8 @@ antonym of [boost](https://www.boost.org/): my favorite C++ library. Hopefully, 
 your productivity despite the play on words! :wink:
 
 In part this library is the evolution of an earlier attempt to modernize and then share code I have
-written over the years. Also, I want to provide some capabilities that I wish were in the
-standard, Boost, or other libraries.
+written over the years. Also, I want to provide some capabilities that I wish were in the standard,
+Boost, or other libraries.
 
 # Documentation and Usage
 
@@ -42,12 +42,14 @@ test/require is C++11.
 
 ### Platforms
 
-* Debian Stable (The reference platform for all development.)
+* Debian (The reference platform for all development.)
+  * Debian 10 (Buster)
+  * Debian 11 (Bullseye)
 
-See the [docker directory](./docker) for tools to create containers (via Docker or Podman) with
-everything you need to build this library. If you have trouble building this library on your Linux
-distribution, let me know by opening an issue. BUT, if you can try, the reference container
-(Debian Stable).
+See the [container directory](./container) for tools to create containers (via Docker or Podman)
+with everything you need to build this library. If you have trouble building this library on your
+Linux distribution, let me know by opening an issue. BUT, if you can try, the reference container
+(Debian Stable). Documentation can be found in the [doc directory](./doc/contents.md).
 
 # Dependencies
 
