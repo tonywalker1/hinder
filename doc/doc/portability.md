@@ -2,14 +2,6 @@
 
 Macros and tests to make it easier to support multiple compilers and C++ versions.
 
-# Dependencies
-
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
-
-# CMake Options
-
-* **HINDER_WITH_TESTS** Build tests when ON. [default = ON]
-
 # Usage
 
 ## C++ Standard Versions
@@ -17,10 +9,10 @@ I never remember the version numbers for each C++ standard and have to look them
 that, I provide the following macros you can use:
 
 ```c++
-#define HINDER_CPP_11 201103L
-#define HINDER_CPP_14 201402L
-#define HINDER_CPP_17 201703L
-#define HINDER_CPP_20 202002L
+#define HINDER_CPP_11 201103L;
+#define HINDER_CPP_14 201402L;
+#define HINDER_CPP_17 201703L;
+#define HINDER_CPP_20 202002L;
 ```
 
 ## Likely/Unlikely
@@ -33,23 +25,24 @@ versions!
     }
 ```
 
-When compiled with C++20 support, the above expands to the newly support [[likely]] and 
+When compiled with C++20 support, the above expands to the newly supported [[likely]] and 
 [[unlikely]]. Otherwise, the macro uses __builtin_expect() which only works for Clang and GCC.
 
-This macro affects code generation, which you can explore for your own code on 
+This macro affects code generation, which you can explore for your own code via 
 [Compiler Explorer](https://godbolt.org/). HOWEVER, don't over use it. ONLY use this macro when a 
 test is truly (i.e., almost 100%) likely/unlikely. A good example is an invariant or precondition 
-test. Otherwise, you might end up hurting your performance.
+test.
 
 ## NODISCARD
 
-C++17 added support for [[nodiscard]]. This library provides a macro
+C++17 added support for [[nodiscard]]. This library provides a macro that expands to [[nodiscard]] 
+on C++17 and higher or nothing on C++11 or C++14. Use this macro liberally. It is a good idea and 
+can catch simple errors.
+
 ```c++
 HINDER_NODISCARD int sum(int x, int y);
 ```
-that expands to [[nodiscard]] on C++17 and higher or nothing on C++11 or C++14. Use this macro
-liberally. It is a good idea and can catch simple errors.
 
 ## More?
 
-As I add to hinder, the wrapper/macros/etc. will certainly grown. 
+Yes, there will be more to come...
