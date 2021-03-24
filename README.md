@@ -8,7 +8,7 @@ your productivity despite the play on words! :wink:
 
 In part this library is the evolution of an earlier attempt to modernize and then share code I have
 written over the years. Also, I want to provide some capabilities that I wish were in the standard,
-Boost, or other libraries.
+Boost, or other libraries. I would also be ecstatic if you contributed too!
 
 # Documentation and Usage
 
@@ -25,10 +25,9 @@ documentation in the [doc directory](./doc/contents.md).
 
 # Compilers and Platforms
 
-I currently use C++17 on Debian 11 (Bullseye) and GCC 10.2 for most of my own work. This will be the
-most tested configuration. At-least by me. When Bullseye is released and becomes stable, I will
-continue to use stable until right before the next release (usually shortly before the first freeze)
-to start porting to the next release.
+I use Debian Stable for most of my own work. This will be the most tested configuration (at-least by
+me). However, in preparation for the release of Bullseye, I am currently using Debian Bullseye 
+(testing) and am primarily targeting/testing C++17 via GCC 10.2.1.
 
 ### C++ Standard
 
@@ -38,21 +37,25 @@ test/require is C++11.
 ### Compilers
 
 * Clang
+    * 11.0.1 (Debian Bullseye)
+    * 7.0.1 (Debian Buster)
 * GCC
+    * 10.2.1 (Debian Bullseye)
+    * 8.3.0 (Debian Buster)
 
 ### Platforms
 
-* Debian (The reference platform for all development.)
-  * Debian 10 (Buster)
-  * Debian 11 (Bullseye)
+* Linux
+  * Debian
+    * Debian 10 (Buster)
+    * Debian 11 (Bullseye)
 
 See the [container directory](./container) for tools to create containers (via Docker or Podman)
 with everything you need to build this library. If you have trouble building this library on your
-Linux distribution, let me know by opening an issue. BUT, if you can try, the reference container
-(Debian Stable). Documentation can be found in the [doc directory](./doc/contents.md).
+Linux distribution, let me know by opening an issue. BUT, if you can, try one of the reference 
+containers. Documentation can be found in the [doc directory](./doc/contents.md).
 
 # Dependencies
-
 See CMakeLists.txt in each subproject for the definitive list dependencies or see the documentation
 in the [doc directory](./doc/contents.md).
 

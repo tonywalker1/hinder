@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-BUILD_ROOT="/build/debian-10"
+BUILD_ROOT="/build/debian-buster"
 SRC_DIR="/hinder"
 
 build_config()
