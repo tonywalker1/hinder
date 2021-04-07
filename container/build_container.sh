@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 # detect and set path to container config
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
     echo "build_container.sh <path_to_config>"
     echo "Usage Example:"
     echo "  build_container.sh debian-10"
@@ -46,7 +46,10 @@ else
     echo "  podman or docker must be installed to build containers"
 fi
 
-cd $DIR
+if cd "$DIR"; then
+  echo "ERROR: $DIR doesn't exist."
+  exit 1
+fi
 
 # create volume if needed
 if $TOOL volume inspect "$VOL" >/dev/null 2>&1; then
