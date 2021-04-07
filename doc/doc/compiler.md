@@ -43,6 +43,6 @@ can catch simple errors.
 HINDER_NODISCARD int sum(int x, int y);
 ```
 
-## More?
+# More?
 
 Yes, there will be more to come...

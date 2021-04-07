@@ -1,6 +1,6 @@
 # hinder Library Documentation
 
-## General
+## Building and Installing
 
 * **[CMake Options:](doc/cmake_options.md)** Set various build options.
 * **[Dependencies:](./doc/dependencies.md)** Everything you need to build this library.

@@ -16,6 +16,7 @@ standard, Boost, or other libraries. I would also be ecstatic if you contributed
 * Flexible but clear, simple, and clean.
 * High performance but clear, simple, and clean.
 * Container friendly.
+* Do as much at compile-time as possible.
 * Use the latest C++ standard, techniques, and practices.
 * Prefer the standard library, libraries on track for standardization, or Boost.
 
@@ -66,7 +67,7 @@ make install
 ## Contributing
 
 I would love suggestions, fixes, documentation, examples, and other contributions. I would also be
-interested in help supporting other platforms. See CONTRIBUTING for details.
+interested in help supporting other platforms. See [CONTRIBUTING](./CONTRIBUTING.md) and 
+[CODE_OF_CONDUCT](./CODE_OF_CONDUCT.md) for details.
 
-## Contributors
-Tony Walker <tony.walker.iu@gmail.com> https://github.com/tonywalker1
+See [CONTRIBUTORS](./CONTRIBUTORS.md) for a list of contributors.
