@@ -27,7 +27,7 @@
 #include <catch2/catch.hpp>
 #include <hinder/misc/units.h>
 
-using namespace hinder::misc;
+using namespace hinder;
 
 SCENARIO("specifying a memory block", "[misc_units]") {
     THEN("the block size should be correct") {

@@ -45,13 +45,17 @@ SCENARIO("defining a new exception type", "[exception]") {
     }
 }
 
+#if defined(HINDER_DEFAULT_EXCEPTION_MESSAGE)
+
 SCENARIO("using the throw macro", "[exception]") {
     THEN("the exception should be thrown") {
         CHECK_THROWS_AS(HINDER_THROW(generic_error, "the answer is 42"), generic_error);
     }
     THEN("the message should be returned") {
-        CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
-                          StartsWith("generic_error: the answer is 42"));
+        CHECK_THROWS_WITH(
+            HINDER_THROW(generic_error, "the answer is 42"),
+            Matches(
+                "generic_error: the answer is 42( @.*/tests/exception/exception_tests.cpp:.*)*"));
     }
 }
 
@@ -104,3 +108,5 @@ SCENARIO("using the assertion macros", "[exception]") {
         CHECK_NOTHROW(HINDER_ENSURES(true, generic_error, "the answer is 42"));
     }
 }
+
+#endif

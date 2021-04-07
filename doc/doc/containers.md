@@ -1,8 +1,8 @@
 # Reference Containers
 
-To help you build and/or help contribute to the hinder library, I have provided several reference
-containers that have everything you need to build this library. You can also use these as a basis
-for your own containers and development projects.
+To help you build and/or help contribute to the hinder library, this project provides several
+reference containers that have everything you need to build the hinder library. You can also use
+these as a basis for your own containers and development projects.
 
 The [container directory](../../container) currently has support for:
 
@@ -23,19 +23,18 @@ There are two scripts to manage containers: *build_container.sh* and *run_contai
     #     ./build_container.sh debian-bullseye
     build_container.sh <container_name>
     
-    # <container_name> is the same as above and <path_to_hinder_source> will almost certainly be "..".
     # Example: 
     #     cd container 
     #     ./run_container.sh debian-bullseye ..
     run_container.sh <container_name> <path_to_hinder_source>
 ```
 
-To build an image of any reference container, you will need Docker or Podman (I use Podman).
+To build an image of any reference container, you will need Docker or Podman.
 
 ## Using a Container
 
-When you start a container using one of the reference images via _run_container.sh_, the
-hinder source directory is automatically mounted under _/hinder_ and the build directory is mounted
+When you start a container using one of the reference images via _run_container.sh_, the hinder
+source directory is automatically mounted under _/hinder_ and the build directory is mounted 
 under _/build_.
 
 Note:

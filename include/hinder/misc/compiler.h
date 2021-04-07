@@ -24,8 +24,8 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_PORTABILITY_H
-#define HINDER_MISC_PORTABILITY_H
+#ifndef HINDER_MISC_COMPILER_H
+#define HINDER_MISC_COMPILER_H
 
 // Useful for making tests more readable
 #define HINDER_CPP_11 201103L
@@ -52,4 +52,4 @@
     #define HINDER_NODISCARD
 #endif
 
-#endif  // HINDER_MISC_PORTABILITY_H
+#endif  // HINDER_MISC_COMPILER_H

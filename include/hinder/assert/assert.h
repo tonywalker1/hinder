@@ -1,5 +1,5 @@
 //
-// hinder::misc
+// hinder::assert
 //
 // MIT License
 //
@@ -24,32 +24,13 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_UNITS_H
-#define HINDER_MISC_UNITS_H
+#ifndef HINDER_ASSERT_H
+#define HINDER_ASSERT_H
 
-#include <cstddef>
+#include <fmt/format.h>
 
-namespace hinder {
+#ifdef NDEBUG
+    #define assert(cond, ...) void(0)
+#endif
 
-    // Generate size in bytes from size in KiB, MiB, GiB, TiB.
-    // For example,
-    //     set_buffer(KiB(64));  // yields 64 * 1024 (or 65536) bytes
-    inline constexpr size_t KiB(size_t val) {
-        return val * 1024;  // 2^10
-    }
-
-    inline constexpr size_t MiB(size_t val) {
-        return val * 1048576;  // 2^20
-    }
-
-    inline constexpr size_t GiB(size_t val) {
-        return val * 1073741824;  // 2^30
-    }
-
-    inline constexpr size_t TiB(size_t val) {
-        return val * 1099511627776;  // 2^40
-    }
-
-}  // namespace hinder
-
-#endif  // HINDER_MISC_UNITS_H
+#endif  // HINDER_ASSERT_H

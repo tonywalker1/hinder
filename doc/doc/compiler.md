@@ -1,4 +1,4 @@
-# hinder::portability
+# hinder::compiler
 
 Macros and tests to make it easier to support multiple compilers and C++ versions.
 
@@ -43,6 +43,6 @@ can catch simple errors.
 HINDER_NODISCARD int sum(int x, int y);
 ```
 
-## More?
+# More?
 
 Yes, there will be more to come...

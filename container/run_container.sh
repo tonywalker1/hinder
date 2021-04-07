@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 # set path to container config
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
     echo "run_container.sh <container_name> <path_to_src>"
     echo "Usage Example:"
     echo "  run_container.sh hinder-debian-10 .."
@@ -33,7 +33,7 @@ NAME="$1"
 VOL="hinder_build"
 
 # set path to hinder source
-if [ -z $2 ]; then
+if [ -z "$2" ]; then
     echo "run_container.sh <container_name> <path_to_src>"
     echo "Usage Example:"
     echo "  run_container.sh hinder-debian-10 .."
@@ -42,10 +42,10 @@ fi
 SRC="$2"
 
 # detect and set tool (podman/docker) config
-if [ -n $(which podman) ]; then
+if [ -f /usr/bin/podman ]; then
     echo "* Using podman"
     TOOL=podman
-elif [ -n $(which docker) ]; then
+elif [ -f /usr/bin/docker ]; then
     echo "* Using docker"
     TOOL=docker
 else
