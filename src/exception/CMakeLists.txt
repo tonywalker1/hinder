@@ -17,9 +17,6 @@ target_link_libraries(exception
     PUBLIC fmt
     )
 
-if (HINDER_EXCEPTION_MESSAGE_FORMAT STREQUAL "Structured")
-endif ()
-
 target_include_directories(exception
     PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     PUBLIC $<INSTALL_INTERFACE:include>
