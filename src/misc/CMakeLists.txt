@@ -9,9 +9,8 @@ add_library(misc INTERFACE)
 add_library(hinder::misc ALIAS misc)
 
 target_include_directories(misc
-    INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+    INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    INTERFACE $<INSTALL_INTERFACE:include>
     )
 
 ################################################################################

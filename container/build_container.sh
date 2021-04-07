@@ -35,10 +35,10 @@ VOL="hinder_build"
 IMG="hinder-$NAME"
 
 # detect and set tool (podman/docker) config
-if [ -n $(which podman) ]; then
+if [ -f /usr/bin/podman ]; then
     echo "* Using podman"
     TOOL=podman
-elif [ -n $(which docker) ]; then
+elif [ -f /usr/bin/docker ]; then
     echo "* Using docker"
     TOOL=docker
 else
@@ -57,10 +57,10 @@ else
 fi
 
 #remove existing image if needed
-if podman image exists "$IMG"; then
+#if $TOOL image exists "$IMG"; then
     echo "* Removing existing image $IMG"
-    $TOOL rmi "$IMG"
-fi
+    $TOOL rmi -f "$IMG"
+#fi
 
 # build image
 echo "* Building the image..."

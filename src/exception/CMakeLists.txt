@@ -1,6 +1,7 @@
 ################################################################################
 # find dependencies
 ################################################################################
+find_package(date REQUIRED)
 find_package(fmt REQUIRED)
 
 ################################################################################
@@ -13,15 +14,15 @@ set_target_properties(exception PROPERTIES OUTPUT_NAME "hinder_exception")
 add_library(hinder::exception ALIAS exception)
 
 target_link_libraries(exception
-    PUBLIC
-    fmt
+    PUBLIC fmt
     )
 
+if (HINDER_EXCEPTION_MESSAGE_FORMAT STREQUAL "Structured")
+endif ()
+
 target_include_directories(exception
-    PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${PROJECT_BUILD_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    PUBLIC $<INSTALL_INTERFACE:include>
     )
 
 ################################################################################

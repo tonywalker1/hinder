@@ -1,4 +1,4 @@
-# hinder::portability
+# hinder::compiler
 
 Macros and tests to make it easier to support multiple compilers and C++ versions.
 

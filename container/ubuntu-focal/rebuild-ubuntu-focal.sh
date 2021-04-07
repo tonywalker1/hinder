@@ -32,7 +32,7 @@ build_config()
     BUILD_DIR="$BUILD_ROOT/$COMPILER-cpp$CPP_VER"
 
     mkdir -p "$BUILD_DIR"
-    pushd "$BUILD_DIR"
+    pushd "$BUILD_DIR" || exit 1
     echo "--> $(pwd)"
 
     # set the compiler
