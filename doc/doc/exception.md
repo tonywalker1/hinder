@@ -211,6 +211,13 @@ exception_message::exception_type_key.
 exception_message::exception_type_key = "Exception-Type";
 ```
 
+### Adding a Timestamp
+
+The library contains a simple convenience function ```std::string exception_time()``` that 
+returns the current time as an ISO formatted string (e.g., 2021-04-07T13:10:35.889523258Z). 
+While this function is used for structured messages (described above), you can use this function 
+to provide a timestamp in your own exception messages.
+
 ## Future Directions
 
 Why not use std::format instead of libfmt? At the moment, none of the major compilers implement
