@@ -194,7 +194,7 @@ namespace hinder {
             std::string msg = "{";
             common_structured_message(msg, except, fmtstr, std::forward<args>(a)...);
             fmt::format_to(std::back_inserter(msg),
-                           ", \"{}\": {{file: \"{}\", line: {}}}}}",
+                           ", \"{}\": {{\"file\": \"{}\", \"line\": {}}}}}",
                            exception_message::source_key,
                            file,
                            line);
