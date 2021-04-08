@@ -94,13 +94,13 @@ rather than modifying the current exception. For example,
 ```c++
 try {
        // some code that throws
-   }
-   catch (const std::exception& e) {
-       HINDER_NESTED_THROW(another_exception, "some interesting values: {} {} {}",    
-                           filename,
-                           some_int, 
-                           some_double);
-   }
+}
+catch (const std::exception& e) {
+    HINDER_NESTED_THROW(another_exception, "some interesting values: {} {} {}",    
+                        filename,
+                        some_int, 
+                        some_double);
+}
 ```
 
 ### Output
@@ -109,8 +109,8 @@ Eventually, you will want to handle the exception and log the message(s), for ex
 to stdout, do the following:
 ```c++
 catch (const std::exception& e) {
-       std::cerr << hinder::to_string(e) << std::endl;
-   }
+    std::cerr << hinder::to_string(e) << std::endl;
+}
 ```
 
 to_string() will return the exception message and, in the case of nested exceptions, unwind the
@@ -184,15 +184,15 @@ cmake -HINDER_EXCEPTION_MESSAGE_FORMAT=Structured <path_to_source>
 
 Setting the **Structured** formatting option will produce a JSON object similar to the following:
 
-```json5
+```json
 {
   "message time": "2021-04-07T13:10:35.889523258Z",
   "message type": "exception",
   "exception type": "generic_error",
   "message": "The answer is 42 not 2",
   "source": {
-    file: "/usr/local/src/my_project/mycode.cpp",
-    line: 42
+    "file": "/usr/local/src/my_project/mycode.cpp",
+    "line": 42
   }
 }
 ```
