@@ -29,4 +29,4 @@ cmake -DHINDER_WITH_TESTS=OFF -DHINDER_EXCEPTION_MESSAGE_FORMAT=Structured ..
 * **HINDER_EXCEPTION_MESSAGE_FORMAT:** Select the format of exception messages.
   [**Default** | User | Structured]
 
-See the [exception module documentation](./doc/exception.md) for more details.
+See the [exception module documentation](./exception.md) for more details.
