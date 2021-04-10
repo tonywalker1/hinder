@@ -40,6 +40,9 @@ standard is C++11.
 ### Platforms
 
 * Linux
+  * Debian 10 (Buster)
+  * Debian 11 (Bullseye)
+  * Ubuntu 20.04 (Focal Fossa; LTS)
 
 See the [container directory](./container) for tools to create reference containers (via Docker or
 Podman) with everything you need to build this library. If you have trouble building this library on
