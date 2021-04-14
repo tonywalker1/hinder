@@ -24,5 +24,23 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#ifndef HINDER_ASSERT_THROW_H
+#define HINDER_ASSERT_THROW_H
+
+#include <hinder/assert/handlers/base.h>
+#include <hinder/core/compiler.h>
+#include <hinder/exception/exception.h>
+
+namespace hinder {
+
+    //
+    // Throws an exception on assert failure. The exception contains msg.
+    //
+    struct throw_assert_handler : public assert_handler_base {
+        virtual void operator()(std::string const & msg) override { throw assertion_error {msg}; }
+        virtual auto name() noexcept -> char const * override { return "throw_assert_handler"; };
+    };
+
+}  // namespace hinder
+
+#endif  // HINDER_ASSERT_THROW_H

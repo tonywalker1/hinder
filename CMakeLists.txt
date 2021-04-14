@@ -11,33 +11,11 @@ project(hinder LANGUAGES CXX)
 # global options
 option(HINDER_WITH_TESTS "Build tests. [default = ON]" ON)
 
-#
-# exception options
-#
-
-# add file and line to messages
+# add file and line to exception messages
 option(HINDER_WITH_EXCEPTION_SOURCE "Add '__FILE__ and __LINE__' to exception messages. [default = ON]" ON)
 if (HINDER_WITH_EXCEPTION_SOURCE)
     add_compile_definitions(HINDER_WITH_EXCEPTION_SOURCE)
     message(STATUS "Enabling code source (i.e., __FILE__ and __LINE__) in exception messages.")
-endif ()
-
-# format of exception messages
-set(HINDER_EXCEPTION_MESSAGE_FORMAT Default CACHE STRING "Format of all exception messages (Default|User|Structured). [default = Default]")
-set_property(CACHE HINDER_EXCEPTION_MESSAGE_FORMAT PROPERTY STRINGS Default User Structured)
-if (HINDER_EXCEPTION_MESSAGE_FORMAT STREQUAL "Default")
-    message(STATUS "Enabling default messages for all exceptions messages.")
-    add_compile_definitions(HINDER_DEFAULT_EXCEPTION_MESSAGE)
-elseif (HINDER_EXCEPTION_MESSAGE_FORMAT STREQUAL "Structured")
-    message(STATUS "Enabling structured messages for all exception messages.")
-    add_compile_definitions(HINDER_STRUCTURED_EXCEPTION_MESSAGE)
-elseif (HINDER_EXCEPTION_MESSAGE_FORMAT STREQUAL "User")
-    message(STATUS "Enabling user defined messages for all exception messages.")
-    add_compile_definitions(HINDER_USER_EXCEPTION_MESSAGE)
-else ()
-    message(WARNING "Unknown setting for HINDER_EXCEPTION_MESSAGE_FORMAT. Using Default instead.")
-    message(STATUS "Enabling default messages for all exceptions.")
-    add_compile_definitions(HINDER_DEFAULT_EXCEPTION_MESSAGE)
 endif ()
 
 ################################################################################
@@ -68,7 +46,7 @@ include(GNUInstallDirs)
 ################################################################################
 # display a few import an settings for debugging build problems
 ################################################################################
-message(STATUS "************")
+message(STATUS "************************************************************************************")
 message(STATUS "    C++ Compiler: " ${CMAKE_CXX_COMPILER})
 message(STATUS "       C++ Flags: " ${CMAKE_CXX_FLAGS})
 message(STATUS "    C++ Standard: " ${CMAKE_CXX_STANDARD})
@@ -76,11 +54,12 @@ message(STATUS "      Build Type: " ${CMAKE_BUILD_TYPE})
 message(STATUS "    Verbose Make: " ${CMAKE_VERBOSE_MAKEFILE})
 message(STATUS "     Source Path: " ${PROJECT_SOURCE_DIR})
 message(STATUS "      Build Path: " ${PROJECT_BINARY_DIR})
-message(STATUS "************")
+message(STATUS "************************************************************************************")
 message(STATUS "     Build Tests: " ${HINDER_WITH_TESTS})
 message(STATUS "Exception Source: " ${HINDER_WITH_EXCEPTION_SOURCE})
 message(STATUS "Exception Format: " ${HINDER_EXCEPTION_MESSAGE_FORMAT})
-message(STATUS "************")
+message(STATUS "   Assert Format: " ${HINDER_ASSERT_MESSAGE_FORMAT})
+message(STATUS "************************************************************************************")
 
 ################################################################################
 # find dependencies
@@ -89,12 +68,16 @@ message(STATUS "************")
 ################################################################################
 # build subprojects
 ################################################################################
+add_subdirectory(src/assert)
+add_subdirectory(src/core)
 add_subdirectory(src/exception)
 add_subdirectory(src/misc)
 
 if (HINDER_WITH_TESTS)
     message(STATUS "Testing is enabled. Tests will be built.")
     enable_testing()
+    add_subdirectory(tests/assert)
+#    add_subdirectory(tests/core)
     add_subdirectory(tests/exception)
     add_subdirectory(tests/misc)
 endif ()

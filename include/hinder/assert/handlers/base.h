@@ -1,9 +1,9 @@
 //
-// hinder::misc
+// hinder::assert
 //
 // MIT License
 //
-// Copyright (c) 2021  Tony Walker
+// Copyright (c) 2019-2021  Tony Walker
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,28 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_PLATFORM_H
-#define HINDER_MISC_PLATFORM_H
+#ifndef HINDER_ASSERT_BASE_H
+#define HINDER_ASSERT_BASE_H
 
-#endif  // HINDER_MISC_PLATFORM_H
+#include <memory>
+#include <string>
+
+namespace hinder {
+
+    //
+    // Base class for all assert handlers.
+    //
+    // * operator() is called by HINDER_ASSERT() to handle a failure of the assertion condition.
+    // * msg is a libfmt formatted string (see libfmt for documentation on the format
+    // specification).
+    // * name() returns a human-readable name for the object in case you want to log which handler
+    // is installed
+    //
+    struct assert_handler_base : std::enable_shared_from_this<assert_handler_base> {
+        virtual void operator()(std::string const & msg) = 0;
+        virtual auto name() noexcept -> char const *     = 0;
+    };
+
+}  // namespace hinder
+
+#endif  // HINDER_ASSERT_BASE_H

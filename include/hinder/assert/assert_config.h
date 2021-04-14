@@ -24,5 +24,42 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#ifndef HINDER_ASSERT_CONFIG_H
+#define HINDER_ASSERT_CONFIG_H
+
+#include <hinder/core/format.h>
+#include <hinder/assert/handlers/base.h>
+#include <memory>
+
+namespace hinder {
+
+    //
+    // Configure assert handlers and output.
+    //
+    struct assert_config {
+
+        //
+        // Assertion handler: called when the asserted condition is false.
+        //
+        // Several handlers are available, see include/hinder/assert/handlers, or you can define
+        // your own. By deriving from assert_handler_base, see
+        // include/hinder/assert/handlers/base.h.
+        //
+        // To change the handler,
+        //     hinder::assert_config::handler = std::make_unique<throw_assert_handler>();
+        //
+        // The default handler is "classic_assert_handler".
+        //
+        static std::unique_ptr<assert_handler_base> handler;
+
+        //
+        // Set the message format, see include/hinder/core/format.h.
+        //
+        // The options are currently DEFAULT, USER, and STRUCTURED. THe default is DEFAULT. ;-)
+        //
+        static message_format format;
+    };
+
+}  // namespace hinder
+
+#endif  // HINDER_ASSERT_CONFIG_H

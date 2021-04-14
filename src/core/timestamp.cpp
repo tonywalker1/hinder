@@ -1,5 +1,5 @@
 //
-// hinder::assert
+// hinder::core
 //
 // MIT License
 //
@@ -24,5 +24,12 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <hinder/core/timestamp.h>
+
+namespace hinder {
+
+    std::string timestamp_format::utc_format   = "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z";
+    std::string timestamp_format::local_format = "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}";
+    date::time_zone const * timestamp_format::time_zone = nullptr;
+
+}  // namespace hinder

@@ -24,5 +24,12 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <hinder/assert/assert.h>
+#include <hinder/assert/handlers/classic.h>
+
+namespace hinder {
+
+    std::unique_ptr<assert_handler_base> assert_config::handler {new classic_assert_handler {}};
+    message_format assert_config::format = message_format::DEFAULT;
+
+}  // namespace hinder

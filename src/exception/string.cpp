@@ -24,39 +24,16 @@
 // SOFTWARE.
 //
 
-#include <date/date.h>
+#include <fmt/format.h>
 #include <hinder/exception/exception.h>
+#include <iterator>
+#include <stdexcept>
+#include <string>
 
 namespace hinder {
 
-    std::string exception_message::time_format = "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z";
-    std::string exception_message::time_key    = "message time";
-    std::string exception_message::message_type_key   = "message type";
-    std::string exception_message::exception_type_key = "exception type";
-    std::string exception_message::message_key        = "message";
-    std::string exception_message::source_key         = "source";
-
-
-    HINDER_NODISCARD std::string exception_time() noexcept {
-        auto t = std::chrono::system_clock::now();
-
-        // break into ymd and time-of-day
-        auto dp  = date::floor<date::days>(t);
-        auto ymd = date::year_month_day(dp);
-        auto tod = date::make_time(t - dp);
-
-        // format the string
-        return fmt::format(exception_message::time_format,
-                           static_cast<int>(ymd.year()),
-                           static_cast<unsigned>(ymd.month()),
-                           static_cast<unsigned>(ymd.day()),
-                           tod.hours().count(),
-                           tod.minutes().count(),
-                           tod.seconds().count(),
-                           tod.subseconds().count());
-    }
-
-    void format_exception(std::string& str, const std::exception& e, size_t indent, size_t level) {
+    void
+        format_exception(std::string & str, std::exception const & e, size_t indent, size_t level) {
         // format the current exception
         if (level == 0) {
             fmt::format_to(std::back_inserter(str), "{}", e.what());
@@ -70,12 +47,12 @@ namespace hinder {
         // unwind any nested exceptions
         try {
             std::rethrow_if_nested(e);
-        } catch (std::exception& e) {
+        } catch (std::exception & e) {
             format_exception(str, e, indent, ++level);
         }
     }
 
-    HINDER_NODISCARD std::string to_string(const std::exception& e, size_t indent) {
+    HINDER_NODISCARD std::string to_string(std::exception const & e, size_t indent) {
         std::string msg;
         format_exception(msg, e, indent, 0);
         return msg;

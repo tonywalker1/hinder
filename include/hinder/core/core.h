@@ -1,5 +1,5 @@
 //
-// hinder::assert
+// hinder::core
 //
 // MIT License
 //
@@ -24,5 +24,13 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#ifndef HINDER_CORE_H
+#define HINDER_CORE_H
+
+// This header exists to conveniently include all headers in hinder::core.
+#include <hinder/core/compiler.h>
+#include <hinder/core/format.h>
+#include <hinder/core/platform.h>
+#include <hinder/core/timestamp.h>
+
+#endif  // HINDER_CORE_H

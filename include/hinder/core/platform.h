@@ -1,9 +1,9 @@
 //
-// hinder::misc
+// hinder::core
 //
 // MIT License
 //
-// Copyright (c) 2019-2021  Tony Walker
+// Copyright (c) 2021  Tony Walker
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +24,7 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_COMPILER_H
-#define HINDER_MISC_COMPILER_H
+#ifndef HINDER_CORE_PLATFORM_H
+#define HINDER_CORE_PLATFORM_H
 
-// Useful for making tests more readable
-#define HINDER_CPP_11 201103L
-#define HINDER_CPP_14 201402L
-#define HINDER_CPP_17 201703L
-#define HINDER_CPP_20 202002L
-
-// Yes, everyone has a version of this...now there are n + 1 versions.
-#if defined(__cplusplus) && (__cplusplus >= HINDER_CPP_20) && __has_cpp_attribute(likely)
-    #define HINDER_LIKELY(cond)   (cond) [[likely]]
-    #define HINDER_UNLIKELY(cond) (cond) [[unlikely]]
-#elif defined(__clang__) || defined(__GNUC__)
-    #define HINDER_LIKELY(cond)   __builtin_expect((cond), 1)
-    #define HINDER_UNLIKELY(cond) __builtin_expect((cond), 0)
-#else
-    #define HINDER_LIKELY(cond)   (cond)
-    #define HINDER_UNLIKELY(cond) (cond)
-#endif
-
-// Make sure nodiscard is ignored on earlier compilers
-#if defined(__cplusplus) && (__cplusplus >= HINDER_CPP_17)
-    #define HINDER_NODISCARD [[nodiscard]]
-#else
-    #define HINDER_NODISCARD
-#endif
-
-#endif  // HINDER_MISC_COMPILER_H
+#endif  // HINDER_CORE_PLATFORM_H

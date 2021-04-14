@@ -1,5 +1,5 @@
 //
-// hinder::assert
+// hinder::exception
 //
 // MIT License
 //
@@ -24,5 +24,10 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <hinder/exception/exception_config.h>
+
+namespace hinder {
+
+    message_format exception_config::format {message_format::DEFAULT};
+
+} // namespace hinder

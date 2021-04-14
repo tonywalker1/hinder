@@ -27,10 +27,27 @@
 #ifndef HINDER_ASSERT_H
 #define HINDER_ASSERT_H
 
-#include <fmt/format.h>
+#include <hinder/assert/assert_config.h>
+#include <hinder/assert/detail/format_message.h>
+#include <hinder/assert/handlers/base.h>
+#include <hinder/core/compiler.h>
 
+//
+// Assert that a condition is true. If not, a formatted message (via libfmt) is passed to the
+// installed assertion handler. See set_assert_handler() on details for changing the assertion
+// handler.
+//
+// Example:
+//     HINDER_ASSERT(answer == 42, "Your answer of {} is wrong! {} is correct.", answer, 42);
+//
 #ifdef NDEBUG
-    #define assert(cond, ...) void(0)
+    #define HINDER_ASSERT(cond, ...) ((void)(0))
+#else
+    #define HINDER_ASSERT(cond, ...)                  \
+        HINDER_LIKELY(cond)                           \
+        ? HINDER_NOOP                                 \
+        : hinder::assert_config::handler->operator()( \
+            hinder::detail::make_assert_message((#cond), __FILE__, __LINE__, __VA_ARGS__))
 #endif
 
 #endif  // HINDER_ASSERT_H

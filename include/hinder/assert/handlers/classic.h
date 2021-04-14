@@ -24,5 +24,38 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#ifndef HINDER_ASSERT_CLASSIC_H
+#define HINDER_ASSERT_CLASSIC_H
+
+#include <cstdlib>
+#include <hinder/assert/handlers/base.h>
+#include <iostream>
+#include <string>
+#include <stdexcept>
+
+namespace hinder {
+
+    //
+    // Classic assert handler (i.e., writes a message to stderr and aborts).
+    //
+    // This handler defaults to std::cerr, but you can pass any stream to the constructor. Of
+    // course, the stream needs to remain open for the duration of the program.
+    //
+    class classic_assert_handler : public assert_handler_base {
+    public:
+        classic_assert_handler(std::ostream & out = std::cerr) : m_out {out} {}
+
+        virtual void operator()(std::string const & msg) override {
+            m_out << msg << std::endl;
+            std::terminate();
+        }
+
+        virtual auto name() noexcept -> char const * override { return "classic_assert_handler"; };
+
+    private:
+        std::ostream & m_out;
+    };
+
+}  // namespace hinder
+
+#endif  // HINDER_ASSERT_CLASSIC_H

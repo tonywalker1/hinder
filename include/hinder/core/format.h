@@ -1,5 +1,5 @@
 //
-// hinder::assert
+// hinder::core
 //
 // MIT License
 //
@@ -24,5 +24,17 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#ifndef HINDER_CORE_FORMAT_H
+#define HINDER_CORE_FORMAT_H
+
+namespace hinder {
+
+    //
+    // Format for exceptions and assertions.
+    // The exact meaning of each depends on the module (e.g., hinder::exception).
+    //
+    enum struct message_format {DEFAULT, USER, STRUCTURED};
+
+}  // namespace hinder
+
+#endif  // HINDER_CORE_FORMAT_H

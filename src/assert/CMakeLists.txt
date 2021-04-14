@@ -5,21 +5,20 @@ find_package(date REQUIRED)
 find_package(fmt REQUIRED)
 
 ################################################################################
-# build subproject
+# build project
 ################################################################################
-add_library(exception SHARED
-    exception_config.cpp
-    string.cpp
+add_library(assert SHARED
+    assert_config.cpp
     )
-set_target_properties(exception PROPERTIES OUTPUT_NAME "hinder_exception")
-add_library(hinder::exception ALIAS exception)
+set_target_properties(assert PROPERTIES OUTPUT_NAME "hinder_assert")
+add_library(hinder::assert ALIAS assert)
 
-target_include_directories(exception
-    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    PUBLIC $<INSTALL_INTERFACE:include>
+target_include_directories(assert
+    INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    INTERFACE $<INSTALL_INTERFACE:include>
     )
 
-target_link_libraries(exception
+target_link_libraries(assert
     PUBLIC date-tz
     PUBLIC fmt
     PUBLIC hinder::core
@@ -28,22 +27,22 @@ target_link_libraries(exception
 ################################################################################
 # install project
 ################################################################################
-install(TARGETS exception
-    EXPORT hinder_exceptionTargets
+install(TARGETS assert
+    EXPORT hinder_assertTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 install(
-    DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder/exception
+    DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder/assert
     DESTINATION include/hinder
 )
-install(EXPORT hinder_exceptionTargets
-    FILE hinder_exceptionTargets.cmake
+install(EXPORT hinder_assertTargets
+    FILE hinder_assertTargets.cmake
     NAMESPACE hinder::
-    DESTINATION lib/cmake/hinder_exception
+    DESTINATION lib/cmake/hinder_assert
     )
 install(
-    FILES ${PROJECT_SOURCE_DIR}/cmake/hinder_exceptionConfig.cmake
-    DESTINATION lib/cmake/hinder_exception
+    FILES ${PROJECT_SOURCE_DIR}/cmake/hinder_assertConfig.cmake
+    DESTINATION lib/cmake/hinder_assert
 )

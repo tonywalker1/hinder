@@ -45,68 +45,123 @@ SCENARIO("defining a new exception type", "[exception]") {
     }
 }
 
-#if defined(HINDER_DEFAULT_EXCEPTION_MESSAGE)
-
 SCENARIO("using the throw macro", "[exception]") {
-    THEN("the exception should be thrown") {
-        CHECK_THROWS_AS(HINDER_THROW(generic_error, "the answer is 42"), generic_error);
-    }
-    THEN("the message should be returned") {
-        CHECK_THROWS_WITH(
-            HINDER_THROW(generic_error, "the answer is 42"),
-            Matches(
-                "generic_error: the answer is 42( @.*/tests/exception/exception_tests.cpp:.*)*"));
-    }
-}
 
-SCENARIO("using nested exceptions", "[exception]") {
-    HINDER_DEFINE_EXCEPTION(inner, generic_error);
-    HINDER_DEFINE_EXCEPTION(outer, generic_error);
-
-    THEN("the nested messages should be returned") {
-        auto f = []() {
-            try {
-                HINDER_THROW(inner, "computation error");
-            } catch (const std::exception& e) {
-                try {
-                    HINDER_NESTED_THROW(outer, "the answer should have been 42");
-                } catch (const std::exception& e) {
-                    throw;
-                }
-            }
-        };
-
-        CHECK_THROWS_WITH(f(), StartsWith("outer: the answer should have been 42"));
-
-        try {
-            f();
-        } catch (const std::exception& e) {
-            CHECK_THAT(hinder::to_string(e),
-                       Matches("outer: the answer should have been 42( @.*:.*)*\n"
-                               "  inner: computation error( @.*:.*)*"));
+    WHEN("throwing a generic_error exception") {
+        THEN("the exception should be thrown") {
+            CHECK_THROWS_AS(HINDER_THROW(generic_error, "the answer is 42"), generic_error);
         }
     }
+
+#ifdef HINDER_WITH_EXCEPTION_SOURCE
+
+    exception_config::format = message_format::DEFAULT;
+    WHEN("using default formatting with source location") {
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches("generic_error: the answer is 42 "
+                                      "@.*/tests/exception/exception_tests.cpp:\\d+"));
+        }
+    }
+
+    exception_config::format = message_format::USER;
+    WHEN("using user formatting with source location") {
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "{0} - {1}, {2} the answer is {3}", 42),
+                              Matches("generic_error - .*/tests/exception/exception_tests.cpp, "
+                                      "\\d+ the answer is 42"));
+        }
+    }
+
+    exception_config::format = message_format::STRUCTURED;
+    WHEN("using structured formatting with source location") {
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(R"(^\{\"\w.*)"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(R"(.*\d\}\}$)"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(".*\"message time\": "
+                                      "\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{9}Z\".*"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Contains("\"message type\": \"exception\""));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Contains("\"exception type\": \"generic_error\""));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Contains("\"message\": \"the answer is 42\""));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(".*\"source\": \\{\"file\": .*, \"line\": .*\\}.*"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(".*\"file\": \".*/tests/exception/exception_tests.cpp\".*"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(".*\"line\": \\d{1,3}.*"));
+        }
+    }
+
+#else
+
+    exception_config::format = message_format::DEFAULT;
+    WHEN("using default formatting without source location") {
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Equals("generic_error: the answer is 42"));
+        }
+    }
+
+    exception_config::format = message_format::USER;
+    WHEN("using user formatting without source location") {
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "{0} - the answer is {1}", 42),
+                              Equals("generic_error - the answer is 42"));
+        }
+    }
+
+    exception_config::format = message_format::STRUCTURED;
+    WHEN("using structured formatting without source location") {
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(R"(^\{\"\w.*)"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(R"(.*\"\}$)"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Matches(".*\"message time\": "
+                                      "\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{9}Z\".*"));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Contains("\"message type\": \"exception\""));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Contains("\"exception type\": \"generic_error\""));
+            CHECK_THROWS_WITH(HINDER_THROW(generic_error, "the answer is 42"),
+                              Contains("\"message\": \"the answer is 42\""));
+        }
+    }
+
+#endif
 }
 
 SCENARIO("using the assertion macros", "[exception]") {
-    THEN("the exception should be thrown") {
-        CHECK_THROWS_AS(HINDER_INVARIANT(0 == 1, generic_error, "the answer is 42"), generic_error);
-        CHECK_THROWS_AS(HINDER_EXPECTS(0 == 1, generic_error, "the answer is 42"), generic_error);
-        CHECK_THROWS_AS(HINDER_ENSURES(0 == 1, generic_error, "the answer is 42"), generic_error);
+    WHEN("the condition is false") {
+        THEN("the exception should be thrown") {
+            CHECK_THROWS_AS(HINDER_INVARIANT(0 == 1, generic_error, "the answer is 42"),
+                            generic_error);
+            CHECK_THROWS_AS(HINDER_EXPECTS(0 == 1, generic_error, "the answer is 42"),
+                            generic_error);
+            CHECK_THROWS_AS(HINDER_ENSURES(0 == 1, generic_error, "the answer is 42"),
+                            generic_error);
+        }
+        THEN("the message should be returned") {
+            CHECK_THROWS_WITH(HINDER_INVARIANT(0 == 1, generic_error, "the answer is 42"),
+                              Contains("the answer is 42"));
+            CHECK_THROWS_WITH(HINDER_EXPECTS(0 == 1, generic_error, "the answer is 42"),
+                              Contains("the answer is 42"));
+            CHECK_THROWS_WITH(HINDER_ENSURES(0 == 1, generic_error, "the answer is 42"),
+                              Contains("the answer is 42"));
+        }
     }
-    THEN("the message should be returned") {
-        CHECK_THROWS_WITH(HINDER_INVARIANT(0 == 1, generic_error, "the answer is 42"),
-                          Matches("generic_error: the answer is 42( @.*:.*)*"));
-        CHECK_THROWS_WITH(HINDER_EXPECTS(0 == 1, generic_error, "the answer is 42"),
-                          Matches("generic_error: the answer is 42( @.*:.*)*"));
-        CHECK_THROWS_WITH(HINDER_ENSURES(0 == 1, generic_error, "the answer is 42"),
-                          Matches("generic_error: the answer is 42( @.*:.*)*"));
-    }
-    THEN("the exception should not be thrown") {
-        CHECK_NOTHROW(HINDER_INVARIANT(true, generic_error, "the answer is 42"));
-        CHECK_NOTHROW(HINDER_EXPECTS(true, generic_error, "the answer is 42"));
-        CHECK_NOTHROW(HINDER_ENSURES(true, generic_error, "the answer is 42"));
+    WHEN("the condition is true") {
+        THEN("the exception should not be thrown") {
+            CHECK_NOTHROW(HINDER_INVARIANT(true, generic_error, "the answer is 42"));
+            CHECK_NOTHROW(HINDER_EXPECTS(true, generic_error, "the answer is 42"));
+            CHECK_NOTHROW(HINDER_ENSURES(true, generic_error, "the answer is 42"));
+        }
     }
 }
-
-#endif

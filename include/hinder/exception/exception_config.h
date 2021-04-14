@@ -1,5 +1,5 @@
 //
-// hinder::assert
+// hinder::exception
 //
 // MIT License
 //
@@ -24,5 +24,24 @@
 // SOFTWARE.
 //
 
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#ifndef HINDER_EXCEPTION_CONFIG_H
+#define HINDER_EXCEPTION_CONFIG_H
+
+#include <hinder/core/format.h>
+
+namespace hinder {
+
+    struct exception_config {
+
+        //
+        // Set the message format, see include/hinder/core/format.h.
+        //
+        // The options are currently DEFAULT, USER, and STRUCTURED. The default is DEFAULT. ;-)
+        //
+        static message_format format;
+
+    }; // struct exception_config
+
+} // namespace hinder
+
+#endif  // HINDER_EXCEPTION_CONFIG_H

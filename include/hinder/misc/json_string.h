@@ -27,8 +27,8 @@
 #ifndef HINDER_MISC_JSON_H
 #define HINDER_MISC_JSON_H
 
+#include <core/compiler.h>
 #include <fmt/format.h>
-#include <hinder/misc/compiler.h>
 #include <type_traits>
 
 namespace hinder {
