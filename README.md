@@ -2,6 +2,8 @@
 
 A collection of useful C++ libraries.
 
+NOTE: I have shifted my development to Rust. I will leave this project here, but unmaintained.
+
 To *hinder* something is to make doing that thing more difficult. I chose this name because it is an
 antonym of [boost](https://www.boost.org/): my **second** favorite C++ library. Hopefully, hinder
 also boosts your productivity despite the play on words! :wink:
