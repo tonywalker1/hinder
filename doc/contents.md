@@ -4,8 +4,6 @@
 
 * **[CMake Options:](doc/cmake_options.md)** Set various build options.
 * **[Dependencies:](./doc/dependencies.md)** Everything you need to build this library.
-* **[Reference Containers:](./doc/containers.md)** Build and run containers with all of the tools
-  needed to build and test the hinder library.
 
 ## Overviews/Tutorials
 
