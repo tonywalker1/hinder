@@ -6,7 +6,7 @@ To *hinder* something is to make doing that thing more difficult. I chose this n
 antonym of [boost](https://www.boost.org/): my **second** favorite C++ library. Hopefully, hinder
 also boosts your productivity despite the play on words! :wink:
 
-In part this library is the evolution of an earlier attempt to modernize and then share code I have
+In part, this library is the evolution of an earlier attempt to modernize and then share code I have
 written over the years. Also, I want to provide some capabilities that I wish were in the C++
 standard, Boost, or other libraries. I would also be ecstatic if you contributed too!
 
@@ -28,8 +28,7 @@ See the documentation in the [doc directory](./doc/contents.md).
 
 ### C++ Standard
 
-If you do not set CMAKE_CXX_STANDARD, the default is C++17. At the moment, the minimum supported
-standard is C++11.
+If you do not set CMAKE_CXX_STANDARD, the default is C++20. The minimum supported standard is C++20.
 
 ### Compilers
 
@@ -39,13 +38,6 @@ standard is C++11.
 ### Platforms
 
 * Linux
-    * Debian 10 (Buster)
-    * Debian 11 (Bullseye)
-    * Ubuntu 20.04 (Focal Fossa; LTS)
-
-See the [container directory](./container) for tools to create reference containers (via Docker or
-Podman) with everything you need to build this library. If you have trouble building this library on
-your Linux distribution, please report it. But, if you can, try one of the reference containers.
 
 ## Dependencies
 

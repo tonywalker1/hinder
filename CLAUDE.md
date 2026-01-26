@@ -28,7 +28,7 @@ make install
 
 - `HINDER_WITH_TESTS` - Build tests (default: ON)
 - `HINDER_WITH_EXCEPTION_SOURCE` - Add `__FILE__` and `__LINE__` to exception messages (default: ON)
-- `CMAKE_CXX_STANDARD` - C++ standard version (default: 17, minimum: 11)
+- `CMAKE_CXX_STANDARD` - C++ standard version (default: 20, minimum: 20)
 - `CMAKE_BUILD_TYPE` - Build type (default: Release)
 
 ### Running Tests
@@ -166,18 +166,5 @@ The project enforces strict code quality:
 - Follow `.clang-format` configuration (appears to be LLVM-based style)
 - Pass `.clang-tidy` checks (extensive checks enabled: boost, bugprone, cert, cppcoreguidelines,
   hicpp, modernize, performance, readability, etc.)
-- Use C++11 as minimum, C++17 as default
+- Use C++20 as minimum standard
 - Prefer compile-time checks and modern C++ idioms
-
-## Container Support
-
-Reference containers are provided in `container/` for reproducible builds:
-- `debian-buster/` - Debian 10 environment
-- `debian-bullseye/` - Debian 11 environment
-- `ubuntu-focal/` - Ubuntu 20.04 LTS environment
-
-Build and run containers using:
-```bash
-./container/build_container.sh <platform>
-./container/run_container.sh <platform>
-```
