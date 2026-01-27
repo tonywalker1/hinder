@@ -1,10 +1,4 @@
 ################################################################################
-# find dependencies
-################################################################################
-find_package(date REQUIRED)
-find_package(fmt REQUIRED)
-
-################################################################################
 # build subproject
 ################################################################################
 add_library(exception SHARED
@@ -20,8 +14,6 @@ target_include_directories(exception
     )
 
 target_link_libraries(exception
-    PUBLIC date-tz
-    PUBLIC fmt
     PUBLIC hinder::core
     )
 

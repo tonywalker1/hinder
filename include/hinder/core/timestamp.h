@@ -3,7 +3,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2019-2021  Tony Walker
+// Copyright (c) 2019-2026  Tony Walker
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@
 #ifndef HINDER_CORE_TIMESTAMP_H
 #define HINDER_CORE_TIMESTAMP_H
 
-#include <date/tz.h>
-#include <fmt/format.h>
+#include <chrono>
+#include <format>
 #include <hinder/core/compiler.h>
 #include <string>
 
@@ -44,16 +44,16 @@ namespace hinder {
     // the 'T' separating the date from the time. See timestamp_format below.
     //
     // To set the time zone [only impacts local_timestamp()]:
-    //    timestamp_format::time_zone =  date::locate_zone("Europe/Berlin");
-    // If you do not set a time zone, local_timestamp() uses date::current_zone().
+    //    timestamp_format::time_zone =  std::chrono::locate_zone("Europe/Berlin");
+    // If you do not set a time zone, local_timestamp() uses std::chrono::current_zone().
     //
     // These are convenience functions that probably should only be used for error/log messages.
     //
 
     struct timestamp_format {
-        static std::string             utc_format;
-        static std::string             local_format;
-        static date::time_zone const * time_zone;
+        static std::string                    utc_format;
+        static std::string                    local_format;
+        static const std::chrono::time_zone * time_zone;
     };
 
     HINDER_NODISCARD auto utc_timestamp() -> std::string {
@@ -61,43 +61,47 @@ namespace hinder {
         auto t = std::chrono::system_clock::now();
 
         // break into ymd and time-of-day
-        auto dp  = date::floor<date::days>(t);
-        auto ymd = date::year_month_day(dp);
-        auto tod = date::make_time(t - dp);
+        auto dp  = std::chrono::floor<std::chrono::days>(t);
+        auto ymd = std::chrono::year_month_day(dp);
+        auto tod = std::chrono::hh_mm_ss(t - dp);
 
         // convert the time to a string
-        return fmt::format(timestamp_format::utc_format,
-                           static_cast<int>(ymd.year()),
-                           static_cast<unsigned>(ymd.month()),
-                           static_cast<unsigned>(ymd.day()),
-                           tod.hours().count(),
-                           tod.minutes().count(),
-                           tod.seconds().count(),
-                           tod.subseconds().count());
+        auto year = static_cast<int>(ymd.year());
+        auto month = static_cast<unsigned>(ymd.month());
+        auto day = static_cast<unsigned>(ymd.day());
+        auto hours = tod.hours().count();
+        auto minutes = tod.minutes().count();
+        auto seconds = tod.seconds().count();
+        auto subseconds = tod.subseconds().count();
+
+        return std::vformat(timestamp_format::utc_format,
+                            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds));
     }
 
     HINDER_NODISCARD auto local_timestamp() -> std::string {
         // current time in desired time zone
         if (timestamp_format::time_zone == nullptr) {
-            timestamp_format::time_zone = date::current_zone();
+            timestamp_format::time_zone = std::chrono::current_zone();
         }
-        auto t = date::make_zoned(timestamp_format::time_zone, std::chrono::system_clock::now());
+        auto t = std::chrono::zoned_time(timestamp_format::time_zone, std::chrono::system_clock::now());
 
         // break into ymd and time-of-day
-        auto dp  = date::floor<date::days>(t.get_local_time());
-        auto ymd = date::year_month_day(dp);
-        auto tod = date::make_time(t.get_local_time() - dp);
+        auto dp  = std::chrono::floor<std::chrono::days>(t.get_local_time());
+        auto ymd = std::chrono::year_month_day(dp);
+        auto tod = std::chrono::hh_mm_ss(t.get_local_time() - dp);
 
         // convert the time to a string
-        return fmt::format(timestamp_format::local_format,
-                           static_cast<int>(ymd.year()),
-                           static_cast<unsigned>(ymd.month()),
-                           static_cast<unsigned>(ymd.day()),
-                           tod.hours().count(),
-                           tod.minutes().count(),
-                           tod.seconds().count(),
-                           tod.subseconds().count(),
-                           t.get_time_zone()->name());
+        auto year = static_cast<int>(ymd.year());
+        auto month = static_cast<unsigned>(ymd.month());
+        auto day = static_cast<unsigned>(ymd.day());
+        auto hours = tod.hours().count();
+        auto minutes = tod.minutes().count();
+        auto seconds = tod.seconds().count();
+        auto subseconds = tod.subseconds().count();
+        auto tz_name = t.get_time_zone()->name();
+
+        return std::vformat(timestamp_format::local_format,
+                            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds, tz_name));
     }
 
 }  // namespace hinder

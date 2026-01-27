@@ -19,7 +19,7 @@ For an ISO formatted timestamp in local time,
 If you do not specify a time zone via
 ```c++
 // NOTE: this setting only applies to local_timestamp()
-    timestamp_format::time_zone = date::locate_zone("Europe/Berlin");
+    timestamp_format::time_zone = std::chrono::locate_zone("Europe/Berlin");
 ```
 the function will use your current timezone. This may not be what you want.
 

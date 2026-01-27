@@ -24,7 +24,7 @@
 // SOFTWARE.
 //
 
-#include <fmt/format.h>
+#include <format>
 #include <hinder/exception/exception.h>
 #include <iterator>
 #include <stdexcept>
@@ -36,9 +36,9 @@ namespace hinder {
         format_exception(std::string & str, std::exception const & e, size_t indent, size_t level) {
         // format the current exception
         if (level == 0) {
-            fmt::format_to(std::back_inserter(str), "{}", e.what());
+            std::format_to(std::back_inserter(str), "{}", e.what());
         } else {
-            fmt::format_to(std::back_inserter(str),
+            std::format_to(std::back_inserter(str),
                            "\n{}{}",
                            std::string(level * indent, ' '),
                            e.what());

@@ -1,10 +1,4 @@
 ################################################################################
-# find dependencies
-################################################################################
-find_package(date REQUIRED)
-find_package(fmt REQUIRED)
-
-################################################################################
 # build project
 ################################################################################
 add_library(assert SHARED
@@ -19,8 +13,6 @@ target_include_directories(assert
     )
 
 target_link_libraries(assert
-    PUBLIC date-tz
-    PUBLIC fmt
     PUBLIC hinder::core
     )
 

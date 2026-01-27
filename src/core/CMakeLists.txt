@@ -1,10 +1,4 @@
 ################################################################################
-# find dependencies
-################################################################################
-find_package(date REQUIRED)
-find_package(fmt REQUIRED)
-
-################################################################################
 # build subproject
 ################################################################################
 add_library(core SHARED
@@ -16,11 +10,6 @@ add_library(hinder::core ALIAS core)
 target_include_directories(core
     PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     PUBLIC $<INSTALL_INTERFACE:include>
-    )
-
-target_link_libraries(core
-    PUBLIC date-tz
-    PUBLIC fmt
     )
 
 ################################################################################
