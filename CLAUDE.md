@@ -107,6 +107,22 @@ The project is organized into independent modules under `src/` and `include/hind
 - `exception` - Depends on `core`, uses `fmt`
 - `misc` - Minimal dependencies (mostly header-only)
 
+### Configurable Utility Pattern
+
+When implementing utilities with optional configuration (like `utc_timestamp()` and
+`local_timestamp()`):
+
+- **Provide zero-overhead defaults**: Use static const config objects as default parameters
+- **Resolve optional parameters at call time**: For values that might change (like timezone from
+  environment), store `nullptr` in config and resolve to actual value in the function body. This
+  handles environment changes and avoids static initialization order issues.
+- **Thread safety**: No mutable globals. All configuration passes through const parameters.
+- **API simplicity**: Default arguments preserve simple `function()` call syntax while allowing
+  `function(custom_config)` when needed.
+
+Example: `timestamp.h` config types with `iso_format` static defaults, timezone nullptr resolved to
+`current_zone()` at call time.
+
 ### External Dependencies
 
 The project uses C++20 standard library features (`<format>` and `<chrono>`) for all formatting and timestamp functionality.
