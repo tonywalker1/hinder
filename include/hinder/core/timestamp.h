@@ -28,8 +28,6 @@
 #define HINDER_CORE_TIMESTAMP_H
 
 #include <chrono>
-#include <format>
-#include <hinder/core/compiler.h>
 #include <string>
 
 namespace hinder {
@@ -40,69 +38,40 @@ namespace hinder {
     // The default format is:
     //       utc_timestamp():  "2021-04-14T14:41:26.833393854Z"
     //     local_timestamp():  "2021-04-14T10:41:26.833393854Z America/New_York"
-    // You really should log in ISO formatted time. The only change I would recommend is removing
-    // the 'T' separating the date from the time. See timestamp_format below.
     //
-    // To set the time zone [only impacts local_timestamp()]:
-    //    timestamp_format::time_zone =  std::chrono::locate_zone("Europe/Berlin");
-    // If you do not set a time zone, local_timestamp() uses std::chrono::current_zone().
+    // To customize the format or timezone, create a config object:
+    //     auto berlin_config = local_timestamp_config{
+    //         "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d} {}",
+    //         std::chrono::locate_zone("Europe/Berlin")
+    //     };
+    //     auto ts = local_timestamp(berlin_config);
     //
     // These are convenience functions that probably should only be used for error/log messages.
     //
 
-    struct timestamp_format {
-        static std::string                    utc_format;
-        static std::string                    local_format;
-        static const std::chrono::time_zone * time_zone;
+    struct utc_timestamp_config {
+        std::string format;
+
+        explicit utc_timestamp_config(std::string fmt) : format(std::move(fmt)) {}
+
+        static const utc_timestamp_config iso_format;
     };
 
-    HINDER_NODISCARD auto utc_timestamp() -> std::string {
-        // current time in UTC
-        auto t = std::chrono::system_clock::now();
+    struct local_timestamp_config {
+        std::string                    format;
+        const std::chrono::time_zone * timezone;
 
-        // break into ymd and time-of-day
-        auto dp  = std::chrono::floor<std::chrono::days>(t);
-        auto ymd = std::chrono::year_month_day(dp);
-        auto tod = std::chrono::hh_mm_ss(t - dp);
+        local_timestamp_config(std::string fmt, const std::chrono::time_zone * tz = nullptr)
+            : format(std::move(fmt)), timezone(tz) {}
 
-        // convert the time to a string
-        auto year = static_cast<int>(ymd.year());
-        auto month = static_cast<unsigned>(ymd.month());
-        auto day = static_cast<unsigned>(ymd.day());
-        auto hours = tod.hours().count();
-        auto minutes = tod.minutes().count();
-        auto seconds = tod.seconds().count();
-        auto subseconds = tod.subseconds().count();
+        static const local_timestamp_config iso_format;
+    };
 
-        return std::vformat(timestamp_format::utc_format,
-                            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds));
-    }
+    [[nodiscard]] auto utc_timestamp(
+        const utc_timestamp_config & config = utc_timestamp_config::iso_format) -> std::string;
 
-    HINDER_NODISCARD auto local_timestamp() -> std::string {
-        // current time in desired time zone
-        if (timestamp_format::time_zone == nullptr) {
-            timestamp_format::time_zone = std::chrono::current_zone();
-        }
-        auto t = std::chrono::zoned_time(timestamp_format::time_zone, std::chrono::system_clock::now());
-
-        // break into ymd and time-of-day
-        auto dp  = std::chrono::floor<std::chrono::days>(t.get_local_time());
-        auto ymd = std::chrono::year_month_day(dp);
-        auto tod = std::chrono::hh_mm_ss(t.get_local_time() - dp);
-
-        // convert the time to a string
-        auto year = static_cast<int>(ymd.year());
-        auto month = static_cast<unsigned>(ymd.month());
-        auto day = static_cast<unsigned>(ymd.day());
-        auto hours = tod.hours().count();
-        auto minutes = tod.minutes().count();
-        auto seconds = tod.seconds().count();
-        auto subseconds = tod.subseconds().count();
-        auto tz_name = t.get_time_zone()->name();
-
-        return std::vformat(timestamp_format::local_format,
-                            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds, tz_name));
-    }
+    [[nodiscard]] auto local_timestamp(
+        const local_timestamp_config & config = local_timestamp_config::iso_format) -> std::string;
 
 }  // namespace hinder
 
