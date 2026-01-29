@@ -33,7 +33,7 @@ namespace hinder {
     // Format for exceptions and assertions.
     // The exact meaning of each depends on the module (e.g., hinder::exception).
     //
-    enum struct message_format {DEFAULT, USER, STRUCTURED};
+    enum struct message_format { DEFAULT, USER, STRUCTURED };
 
 }  // namespace hinder
 

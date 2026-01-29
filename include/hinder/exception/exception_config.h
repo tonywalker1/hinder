@@ -40,8 +40,8 @@ namespace hinder {
         //
         static message_format format;
 
-    }; // struct exception_config
+    };  // struct exception_config
 
-} // namespace hinder
+}  // namespace hinder
 
 #endif  // HINDER_EXCEPTION_CONFIG_H

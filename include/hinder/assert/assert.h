@@ -47,7 +47,7 @@
         HINDER_LIKELY(cond)                           \
         ? HINDER_NOOP                                 \
         : hinder::assert_config::handler->operator()( \
-            hinder::detail::make_assert_message((#cond), __FILE__, __LINE__, __VA_ARGS__))
+              hinder::detail::make_assert_message((#cond), __FILE__, __LINE__, __VA_ARGS__))
 #endif
 
 #endif  // HINDER_ASSERT_H

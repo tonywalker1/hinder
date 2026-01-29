@@ -30,4 +30,4 @@ namespace hinder {
 
     message_format exception_config::format {message_format::DEFAULT};
 
-} // namespace hinder
+}  // namespace hinder
