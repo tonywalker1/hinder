@@ -1,8 +1,11 @@
+---
+# Check categories (preserved from original)
 Checks: >-
     boost-*,
     bugprone-*,
     cert-*,
     clang-analyzer-*,
+    clang-diagnostic-*,
     concurrency-*,
     cppcoreguidelines-*,
     hicpp-*,
@@ -14,3 +17,86 @@ Checks: >-
     performance-*,
     portability-*,
     readability-*
+
+# Treat warnings as errors (new option - set to empty to not enforce)
+WarningsAsErrors: ''
+
+# File extensions (new options)
+HeaderFileExtensions:
+  - ''
+  - h
+  - hh
+  - hpp
+  - hxx
+ImplementationFileExtensions:
+  - c
+  - cc
+  - cpp
+  - cxx
+
+# Header filtering (new options)
+HeaderFilterRegex: ''
+ExcludeHeaderFilterRegex: ''
+
+# Format style (new option - 'none' means use .clang-format file)
+FormatStyle:     none
+
+# System headers (new option - don't check system headers)
+SystemHeaders:   false
+
+# Check options (new section - only including commonly-tuned options)
+# Note: Many defaults are sensible. Uncomment and customize as needed.
+CheckOptions:
+  # Boost checks
+  # boost-use-ranges.IncludeStyle: llvm
+
+  # Bugprone checks
+  # bugprone-easily-swappable-parameters.MinimumLength: '2'
+  # bugprone-string-constructor.LargeLengthThreshold: '8388608'
+
+  # CERT checks
+  # cert-err33-c.AllowCastToVoid: 'true'
+
+  # C++ Core Guidelines
+  # cppcoreguidelines-avoid-magic-numbers.IgnoredIntegerValues: '1;2;3;4;'
+  # cppcoreguidelines-avoid-magic-numbers.IgnoredFloatingPointValues: '1.0;100.0;'
+  # cppcoreguidelines-init-variables.IncludeStyle: llvm
+  # cppcoreguidelines-narrowing-conversions.WarnOnEquivalentBitWidth: 'true'
+
+  # HICPP checks
+  # hicpp-function-size.StatementThreshold: '800'
+
+  # LLVM checks
+  # llvm-namespace-comment.ShortNamespaceLines: '1'
+
+  # Misc checks
+  # misc-const-correctness.AnalyzeValues: 'true'
+  # misc-const-correctness.AnalyzeReferences: 'true'
+  # misc-const-correctness.AnalyzePointers: 'true'
+
+  # Modernize checks
+  modernize-loop-convert.IncludeStyle: llvm
+  modernize-make-shared.IncludeStyle: llvm
+  modernize-make-unique.IncludeStyle: llvm
+  modernize-pass-by-value.IncludeStyle: llvm
+  modernize-replace-auto-ptr.IncludeStyle: llvm
+  modernize-use-nodiscard.ReplacementString: '[[nodiscard]]'
+  modernize-use-std-format.FormatHeader: '<format>'
+  modernize-use-std-format.ReplacementFormatFunction: 'std::format'
+  modernize-use-std-print.PrintHeader: '<print>'
+  modernize-use-std-print.ReplacementPrintFunction: 'std::print'
+  modernize-use-std-print.ReplacementPrintlnFunction: 'std::println'
+
+  # Performance checks
+  # performance-inefficient-string-concatenation.StrictMode: 'false'
+  # performance-move-const-arg.CheckTriviallyCopyableMove: 'true'
+
+  # Readability checks
+  readability-function-cognitive-complexity.Threshold: '25'
+  readability-function-size.StatementThreshold: '800'
+  readability-identifier-length.MinimumVariableNameLength: '3'
+  readability-identifier-length.MinimumParameterNameLength: '3'
+  readability-identifier-length.MinimumLoopCounterNameLength: '2'
+  # readability-magic-numbers.IgnoredIntegerValues: '1;2;3;4;'
+  # readability-magic-numbers.IgnoredFloatingPointValues: '1.0;100.0;'
+...
