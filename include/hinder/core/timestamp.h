@@ -62,16 +62,19 @@ namespace hinder {
         const std::chrono::time_zone * timezone;
 
         local_timestamp_config(std::string fmt, const std::chrono::time_zone * tz = nullptr)
-            : format(std::move(fmt)), timezone(tz) {}
+        : format(std::move(fmt)),
+          timezone(tz) {}
 
         static const local_timestamp_config iso_format;
     };
 
-    [[nodiscard]] auto utc_timestamp(
-        const utc_timestamp_config & config = utc_timestamp_config::iso_format) -> std::string;
+    [[nodiscard]] auto
+        utc_timestamp(const utc_timestamp_config & config = utc_timestamp_config::iso_format)
+            -> std::string;
 
-    [[nodiscard]] auto local_timestamp(
-        const local_timestamp_config & config = local_timestamp_config::iso_format) -> std::string;
+    [[nodiscard]] auto
+        local_timestamp(const local_timestamp_config & config = local_timestamp_config::iso_format)
+            -> std::string;
 
 }  // namespace hinder
 

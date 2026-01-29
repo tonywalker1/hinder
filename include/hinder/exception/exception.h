@@ -135,7 +135,7 @@ namespace hinder {
     //      std::cout << to_string(e) << '\n';
     //   }
     //
-    HINDER_NODISCARD std::string to_string(std::exception const & e, size_t indent = 2);
+    [[nodiscard]] std::string to_string(std::exception const & e, size_t indent = 2);
 
 }  // namespace hinder
 

@@ -28,31 +28,31 @@
 #define HINDER_MISC_JSON_H
 
 #include <hinder/core/compiler.h>
-#include <format>
+#include <fmt/format.h>
 #include <type_traits>
 
 namespace hinder {
 
     template <typename output_t, typename key_t>
     inline auto json_string_to(output_t it, key_t key, const char* value) -> output_t {
-        return HINDER_UNLIKELY(value == nullptr) ? std::format_to(it, "\"{}\": \"\"", key)
-                                                 : std::format_to(it, "\"{}\": \"{}\"", key, value);
+        return HINDER_UNLIKELY(value == nullptr) ? fmt::format_to(it, "\"{}\": \"\"", key)
+                                                 : fmt::format_to(it, "\"{}\": \"{}\"", key, value);
     }
 
     template <typename output_t, typename key_t, typename value_t>
     inline auto json_string_to(output_t it, key_t key, value_t value) -> output_t {
-        return std::format_to(it, "\"{}\": \"{}\"", key, value);
+        return fmt::format_to(it, "\"{}\": \"{}\"", key, value);
     }
 
     template <typename output_t, typename key_t, typename value_t>
     inline auto json_number_to(output_t it, key_t key, value_t value) -> output_t {
-        return std::format_to(it, "\"{}\": {}", key, value);
+        return fmt::format_to(it, "\"{}\": {}", key, value);
     }
 
     template <typename output_t, typename key_t, typename value_t>
     inline auto json_bool_to(output_t it, key_t key, value_t value) -> output_t {
-        return value ? std::format_to(it, "\"{}\": true", key)
-                     : std::format_to(it, "\"{}\": false", key);
+        return value ? fmt::format_to(it, "\"{}\": true", key)
+                     : fmt::format_to(it, "\"{}\": false", key);
     }
 
 }  // namespace hinder

@@ -30,18 +30,20 @@
 //
 // Useful for making tests more readable
 //
-#define HINDER_CPP_11 201103L
-#define HINDER_CPP_14 201402L
-#define HINDER_CPP_17 201703L
-#define HINDER_CPP_20 202002L
+#define HINDER_CPP_11 201'103L
+#define HINDER_CPP_14 201'402L
+#define HINDER_CPP_17 201'703L
+#define HINDER_CPP_20 202'002L
 
 //
-// Yes, everyone has a version of this...now there are n + 1 versions.
+// Branch prediction hints.
 //
-#if defined(__cplusplus) && (__cplusplus >= HINDER_CPP_20) && __has_cpp_attribute(likely)
-    #define HINDER_LIKELY(cond)   (cond) [[likely]]
-    #define HINDER_UNLIKELY(cond) (cond) [[unlikely]]
-#elif defined(__clang__) || defined(__GNUC__)
+// NOTE: [[likely]] and [[unlikely]] attributes can only be used with if-statements, not ternary
+// operators. These macros use __builtin_expect when C++20 attributes cannot be used directly.
+// The project requires C++20, so these macros always expand to the __builtin form for use in
+// ternary expressions throughout the codebase.
+//
+#if defined(__clang__) || defined(__GNUC__)
     #define HINDER_LIKELY(cond)   __builtin_expect((cond), 1)
     #define HINDER_UNLIKELY(cond) __builtin_expect((cond), 0)
 #else
@@ -50,13 +52,11 @@
 #endif
 
 //
-// Make sure nodiscard is ignored on earlier compilers
+// DEPRECATED: Use [[nodiscard]] attribute directly.
+// This macro is retained for backward compatibility but will be removed in a future version.
+// The project requires C++20, so [[nodiscard]] is always available.
 //
-#if defined(__cplusplus) && (__cplusplus >= HINDER_CPP_17)
-    #define HINDER_NODISCARD [[nodiscard]]
-#else
-    #define HINDER_NODISCARD
-#endif
+#define HINDER_NODISCARD [[nodiscard]]
 
 //
 // Compiles to nothing (i.e., a no-op)

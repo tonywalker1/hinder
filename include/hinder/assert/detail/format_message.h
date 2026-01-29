@@ -27,7 +27,7 @@
 #ifndef HINDER_ASSERT_FORMAT_MESSAGE_H
 #define HINDER_ASSERT_FORMAT_MESSAGE_H
 
-#include <format>
+#include <fmt/format.h>
 #include <hinder/assert/assert_config.h>
 #include <hinder/core/compiler.h>
 #include <hinder/core/format.h>
@@ -40,20 +40,20 @@ namespace hinder {
     namespace detail {
 
         template <typename... args>
-        HINDER_NODISCARD auto make_assert_message(char const * const cond,
-                                                  char const * const file,
-                                                  int                line,
-                                                  const char * const fmtstr,
-                                                  args &&... a) -> std::string {
+        [[nodiscard]] auto make_assert_message(char const * const cond,
+                                               char const * const file,
+                                               int                line,
+                                               const char * const fmtstr,
+                                               args &&... a) -> std::string {
             std::string msg;
             if (assert_config::format == message_format::DEFAULT) {
                 //
                 // assert using the default message format
                 //   Assertion 'cond' failed: message @__FILE__:__LINE__
                 //
-                std::format_to(std::back_inserter(msg), "Assertion '{}' failed: ", cond);
-                std::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
-                std::format_to(std::back_inserter(msg), " @{}:{}", file, line);
+                fmt::format_to(std::back_inserter(msg), "Assertion '{}' failed: ", cond);
+                fmt::format_to(std::back_inserter(msg), fmt::runtime(fmtstr), std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg), " @{}:{}", file, line);
 
             } else if (assert_config::format == message_format::USER) {
                 //
@@ -63,8 +63,8 @@ namespace hinder {
                 //   {2} is always __LINE___
                 //   {3...n} can be anything you want
                 //
-                std::format_to(std::back_inserter(msg),
-                               fmtstr,
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
                                cond,
                                file,
                                line,
@@ -74,17 +74,17 @@ namespace hinder {
                 // generate the structured message (a JSON object) with file and line
                 //
                 msg += "{";
-                std::format_to(std::back_inserter(msg),
+                fmt::format_to(std::back_inserter(msg),
                                "\"message time\": \"{}\", ",
                                utc_timestamp());
-                std::format_to(std::back_inserter(msg),
+                fmt::format_to(std::back_inserter(msg),
                                "\"message type\": \"assertion failure\", ");
-                std::format_to(std::back_inserter(msg), "\"assertion condition\": \"{}\", ", cond);
+                fmt::format_to(std::back_inserter(msg), "\"assertion condition\": \"{}\", ", cond);
 
-                std::format_to(std::back_inserter(msg), "\"message\": \"");
-                std::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
-                std::format_to(std::back_inserter(msg), "\"");
-                std::format_to(std::back_inserter(msg),
+                fmt::format_to(std::back_inserter(msg), "\"message\": \"");
+                fmt::format_to(std::back_inserter(msg), fmt::runtime(fmtstr), std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg), "\"");
+                fmt::format_to(std::back_inserter(msg),
                                ", \"source\": {{\"file\": \"{}\", \"line\": {}}}",
                                file,
                                line);

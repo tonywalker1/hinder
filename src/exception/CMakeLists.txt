@@ -1,4 +1,9 @@
 ################################################################################
+# find dependencies
+################################################################################
+find_package(fmt REQUIRED)
+
+################################################################################
 # build subproject
 ################################################################################
 add_library(exception SHARED
@@ -26,6 +31,7 @@ target_include_directories(exception
 )
 
 target_link_libraries(exception
+    PUBLIC fmt::fmt
     PUBLIC hinder::core
 )
 

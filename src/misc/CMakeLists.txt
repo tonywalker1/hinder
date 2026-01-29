@@ -1,4 +1,9 @@
 ################################################################################
+# find dependencies
+################################################################################
+find_package(fmt REQUIRED)
+
+################################################################################
 # build subproject (header-only INTERFACE library)
 ################################################################################
 add_library(misc INTERFACE)
@@ -9,6 +14,10 @@ target_include_directories(misc
     INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(misc
+    INTERFACE fmt::fmt
 )
 
 ################################################################################

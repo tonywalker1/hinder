@@ -32,11 +32,10 @@
 namespace hinder {
 
     // Static member definitions
-    const utc_timestamp_config utc_timestamp_config::iso_format{
-        "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z"
-    };
+    const utc_timestamp_config utc_timestamp_config::iso_format {
+        "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z"};
 
-    const local_timestamp_config local_timestamp_config::iso_format{
+    const local_timestamp_config local_timestamp_config::iso_format {
         "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
         nullptr  // Resolved to std::chrono::current_zone() at call time
     };
@@ -60,8 +59,9 @@ namespace hinder {
         auto seconds    = tod.seconds().count();
         auto subseconds = tod.subseconds().count();
 
-        return std::vformat(config.format,
-                            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds));
+        return std::vformat(
+            config.format,
+            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds));
     }
 
     auto local_timestamp(const local_timestamp_config & config) -> std::string {
@@ -85,8 +85,9 @@ namespace hinder {
         auto subseconds = tod.subseconds().count();
         auto tz_name    = t.get_time_zone()->name();
 
-        return std::vformat(config.format,
-                            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds, tz_name));
+        return std::vformat(
+            config.format,
+            std::make_format_args(year, month, day, hours, minutes, seconds, subseconds, tz_name));
     }
 
 }  // namespace hinder
