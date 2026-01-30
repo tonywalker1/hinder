@@ -39,9 +39,9 @@ namespace hinder {
     namespace detail {
 
         template <typename... args>
-        HINDER_NODISCARD auto make_exception_message(char const * const except,
-                                                     char const * const fmtstr,
-                                                     args &&... a) -> std::string {
+        [[nodiscard]] auto make_exception_message(char const * const except,
+                                                  char const * const fmtstr,
+                                                  args &&... a) -> std::string {
             std::string msg;
             switch (exception_config::format) {
             case message_format::DEFAULT:
@@ -50,7 +50,9 @@ namespace hinder {
                 //   except: message
                 //
                 fmt::format_to(std::back_inserter(msg), "{}: ", except);
-                fmt::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
+                               std::forward<args>(a)...);
                 break;
             case message_format::USER:
                 //
@@ -58,7 +60,7 @@ namespace hinder {
                 //   {0} is always the exception name
                 //   {1...n} can be anything you want
                 //
-                return fmt::format(fmtstr, except, std::forward<args>(a)...);
+                return fmt::format(fmt::runtime(fmtstr), except, std::forward<args>(a)...);
                 break;
             case message_format::STRUCTURED:
                 //
@@ -72,7 +74,9 @@ namespace hinder {
                 fmt::format_to(std::back_inserter(msg), "\"exception type\": \"{}\", ", except);
 
                 fmt::format_to(std::back_inserter(msg), "\"message\": \"");
-                fmt::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
+                               std::forward<args>(a)...);
                 fmt::format_to(std::back_inserter(msg), "\"");
 
                 msg += "}";
@@ -82,11 +86,11 @@ namespace hinder {
         }
 
         template <typename... args>
-        HINDER_NODISCARD auto make_exception_message(char const * const except,
-                                                     char const * const file,
-                                                     int                line,
-                                                     char const * const fmtstr,
-                                                     args &&... a) noexcept -> std::string {
+        [[nodiscard]] auto make_exception_message(char const * const except,
+                                                  char const * const file,
+                                                  int                line,
+                                                  char const * const fmtstr,
+                                                  args &&... a) noexcept -> std::string {
             std::string msg;
             switch (exception_config::format) {
             case message_format::DEFAULT:
@@ -95,7 +99,9 @@ namespace hinder {
                 //   except: message @__FILE__:__LINE__
                 //
                 fmt::format_to(std::back_inserter(msg), "{}: ", except);
-                fmt::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
+                               std::forward<args>(a)...);
                 fmt::format_to(std::back_inserter(msg), " @{}:{}", file, line);
                 break;
             case message_format::USER:
@@ -104,7 +110,11 @@ namespace hinder {
                 //   {1} is always __FILE__
                 //   {2} is always __LINE___
                 //   {3...n} can be anything you want
-                return fmt::format(fmtstr, except, file, line, std::forward<args>(a)...);
+                return fmt::format(fmt::runtime(fmtstr),
+                                   except,
+                                   file,
+                                   line,
+                                   std::forward<args>(a)...);
                 break;
             case message_format::STRUCTURED:
                 //
@@ -117,7 +127,9 @@ namespace hinder {
                 fmt::format_to(std::back_inserter(msg), "\"message type\": \"exception\", ");
                 fmt::format_to(std::back_inserter(msg), "\"exception type\": \"{}\", ", except);
                 fmt::format_to(std::back_inserter(msg), "\"message\": \"");
-                fmt::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
+                               std::forward<args>(a)...);
                 fmt::format_to(std::back_inserter(msg), "\"");
                 fmt::format_to(std::back_inserter(msg),
                                ", \"source\": {{\"file\": \"{}\", \"line\": {}}}",

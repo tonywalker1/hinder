@@ -27,14 +27,14 @@
 #ifndef HINDER_MISC_JSON_H
 #define HINDER_MISC_JSON_H
 
-#include <core/compiler.h>
 #include <fmt/format.h>
+#include <hinder/core/compiler.h>
 #include <type_traits>
 
 namespace hinder {
 
     template <typename output_t, typename key_t>
-    inline auto json_string_to(output_t it, key_t key, const char* value) -> output_t {
+    inline auto json_string_to(output_t it, key_t key, const char * value) -> output_t {
         return HINDER_UNLIKELY(value == nullptr) ? fmt::format_to(it, "\"{}\": \"\"", key)
                                                  : fmt::format_to(it, "\"{}\": \"{}\"", key, value);
     }

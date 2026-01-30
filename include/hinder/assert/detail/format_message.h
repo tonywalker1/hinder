@@ -40,11 +40,11 @@ namespace hinder {
     namespace detail {
 
         template <typename... args>
-        HINDER_NODISCARD auto make_assert_message(char const * const cond,
-                                                  char const * const file,
-                                                  int                line,
-                                                  const char * const fmtstr,
-                                                  args &&... a) -> std::string {
+        [[nodiscard]] auto make_assert_message(char const * const cond,
+                                               char const * const file,
+                                               int                line,
+                                               const char * const fmtstr,
+                                               args &&... a) -> std::string {
             std::string msg;
             if (assert_config::format == message_format::DEFAULT) {
                 //
@@ -52,7 +52,9 @@ namespace hinder {
                 //   Assertion 'cond' failed: message @__FILE__:__LINE__
                 //
                 fmt::format_to(std::back_inserter(msg), "Assertion '{}' failed: ", cond);
-                fmt::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
+                               std::forward<args>(a)...);
                 fmt::format_to(std::back_inserter(msg), " @{}:{}", file, line);
 
             } else if (assert_config::format == message_format::USER) {
@@ -64,7 +66,7 @@ namespace hinder {
                 //   {3...n} can be anything you want
                 //
                 fmt::format_to(std::back_inserter(msg),
-                               fmtstr,
+                               fmt::runtime(fmtstr),
                                cond,
                                file,
                                line,
@@ -82,7 +84,9 @@ namespace hinder {
                 fmt::format_to(std::back_inserter(msg), "\"assertion condition\": \"{}\", ", cond);
 
                 fmt::format_to(std::back_inserter(msg), "\"message\": \"");
-                fmt::format_to(std::back_inserter(msg), fmtstr, std::forward<args>(a)...);
+                fmt::format_to(std::back_inserter(msg),
+                               fmt::runtime(fmtstr),
+                               std::forward<args>(a)...);
                 fmt::format_to(std::back_inserter(msg), "\"");
                 fmt::format_to(std::back_inserter(msg),
                                ", \"source\": {{\"file\": \"{}\", \"line\": {}}}",

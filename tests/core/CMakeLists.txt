@@ -8,7 +8,7 @@ find_package(Catch2 REQUIRED)
 ################################################################################
 add_executable(hinder_core_tests
     main.cpp
-#    core_tests.cpp
+    timestamp_tests.cpp
 )
 
 target_link_libraries(hinder_core_tests

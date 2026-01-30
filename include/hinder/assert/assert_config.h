@@ -27,8 +27,8 @@
 #ifndef HINDER_ASSERT_CONFIG_H
 #define HINDER_ASSERT_CONFIG_H
 
-#include <hinder/core/format.h>
 #include <hinder/assert/handlers/base.h>
+#include <hinder/core/format.h>
 #include <memory>
 
 namespace hinder {

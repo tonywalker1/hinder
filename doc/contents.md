@@ -11,7 +11,7 @@
 
 ## Reference
 
-* **[assert](./doc/assert.md)** Flexible assert library: formatted messages (via libfmt) and user
+* **[assert](./doc/assert.md)** Flexible assert library: formatted messages (via std::format) and user
   defined assert handlers.
 
 * **[core](./doc/core.md)**
@@ -23,7 +23,7 @@
 
 * **[exception](./doc/exception.md):** Simplifies creating new exceptions, testing preconditions,
   testing postconditions, asserting invariants, throwing/catching exceptions, and formatting error
-  messages (using libfmt). Also, supports structured exception messages.
+  messages (using std::format). Also, supports structured exception messages.
 
 * **misc:** An eclectic collection of useful code.
     * **[units](./doc/units.md):** Useful conversions.

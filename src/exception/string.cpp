@@ -52,7 +52,7 @@ namespace hinder {
         }
     }
 
-    HINDER_NODISCARD std::string to_string(std::exception const & e, size_t indent) {
+    [[nodiscard]] std::string to_string(std::exception const & e, size_t indent) {
         std::string msg;
         format_exception(msg, e, indent, 0);
         return msg;

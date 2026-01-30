@@ -24,6 +24,10 @@ make -j
 make install
 ```
 
+### Build Directory Layout
+
+The project uses multiple build configurations simultaneously in `build/<kit>-<buildType>` subdirectories (e.g., `build/gcc-debug`, `build/clang-release`). This allows comparing builds, benchmarks, and test results across different compilers and optimization levels without rebuilding.
+
 ### CMake Options
 
 - `HINDER_WITH_TESTS` - Build tests (default: ON)
@@ -66,7 +70,7 @@ The project is organized into independent modules under `src/` and `include/hind
 
 - **assert** - Flexible assertion library with customizable handlers and formatted messages
   - Supports pluggable assertion handlers (classic abort, throw exception, or custom)
-  - Uses libfmt for message formatting
+  - Uses std::format for message formatting
   - Controlled by NDEBUG (disabled in release builds)
   - Entry: `include/hinder/assert/assert.h`
 
@@ -79,7 +83,7 @@ The project is organized into independent modules under `src/` and `include/hind
 
 - **exception** - Exception utilities with formatted messages and structured output
   - `HINDER_DEFINE_EXCEPTION()` - Macro to define new exception types
-  - `HINDER_THROW()` - Throw with formatted message (libfmt)
+  - `HINDER_THROW()` - Throw with formatted message (std::format)
   - `HINDER_EXPECTS/ENSURES/INVARIANT()` - Contract checking macros
   - Support for nested exceptions with `to_string()`
   - Entry: `include/hinder/exception/exception.h`
@@ -107,11 +111,27 @@ The project is organized into independent modules under `src/` and `include/hind
 - `exception` - Depends on `core`, uses `fmt`
 - `misc` - Minimal dependencies (mostly header-only)
 
+### Configurable Utility Pattern
+
+When implementing utilities with optional configuration (like `utc_timestamp()` and
+`local_timestamp()`):
+
+- **Provide zero-overhead defaults**: Use static const config objects as default parameters
+- **Resolve optional parameters at call time**: For values that might change (like timezone from
+  environment), store `nullptr` in config and resolve to actual value in the function body. This
+  handles environment changes and avoids static initialization order issues.
+- **Thread safety**: No mutable globals. All configuration passes through const parameters.
+- **API simplicity**: Default arguments preserve simple `function()` call syntax while allowing
+  `function(custom_config)` when needed.
+
+Example: `timestamp.h` config types with `iso_format` static defaults, timezone nullptr resolved to
+`current_zone()` at call time.
+
 ### External Dependencies
 
+The project uses C++20 standard library features (`<format>` and `<chrono>`) for all formatting and timestamp functionality.
+
 Required libraries (must be available via `find_package`):
-- **fmt** - String formatting library (used extensively)
-- **date** - Howard Hinnant's date library (used by assert/core for timestamps)
 - **Catch2** - Testing framework (only when `HINDER_WITH_TESTS=ON`)
 
 ### Macro Conventions
@@ -125,7 +145,7 @@ The codebase uses several important macros:
 - **Exceptions**: `HINDER_THROW(exception, fmt, ...)` - Throw with formatted message
 - **Compiler hints**: `HINDER_LIKELY(x)`, `HINDER_UNLIKELY(x)`, `HINDER_NODISCARD`, `HINDER_NOOP`
 
-All formatting uses libfmt syntax: `HINDER_THROW(my_error, "value {} exceeds limit {}", val, max)`
+All formatting uses std::format syntax: `HINDER_THROW(my_error, "value {} exceeds limit {}", val, max)`
 
 ### Testing Structure
 

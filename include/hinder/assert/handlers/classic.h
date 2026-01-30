@@ -30,8 +30,8 @@
 #include <cstdlib>
 #include <hinder/assert/handlers/base.h>
 #include <iostream>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 namespace hinder {
 

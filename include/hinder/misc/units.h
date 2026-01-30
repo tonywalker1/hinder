@@ -35,19 +35,19 @@ namespace hinder {
     // For example,
     //     set_buffer(KiB(64));  // yields 64 * 1024 (or 65536) bytes
     inline constexpr size_t KiB(size_t val) noexcept {
-        return val * 1024;  // 2^10
+        return val * 1'024;  // 2^10
     }
 
     inline constexpr size_t MiB(size_t val) noexcept {
-        return val * 1048576;  // 2^20
+        return val * 1'048'576;  // 2^20
     }
 
     inline constexpr size_t GiB(size_t val) noexcept {
-        return val * 1073741824;  // 2^30
+        return val * 1'073'741'824;  // 2^30
     }
 
     inline constexpr size_t TiB(size_t val) noexcept {
-        return val * 1099511627776;  // 2^40
+        return val * 1'099'511'627'776;  // 2^40
     }
 
 }  // namespace hinder
