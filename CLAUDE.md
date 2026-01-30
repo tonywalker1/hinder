@@ -24,6 +24,10 @@ make -j
 make install
 ```
 
+### Build Directory Layout
+
+The project uses multiple build configurations simultaneously in `build/<kit>-<buildType>` subdirectories (e.g., `build/gcc-debug`, `build/clang-release`). This allows comparing builds, benchmarks, and test results across different compilers and optimization levels without rebuilding.
+
 ### CMake Options
 
 - `HINDER_WITH_TESTS` - Build tests (default: ON)
