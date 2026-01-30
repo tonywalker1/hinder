@@ -50,7 +50,7 @@ namespace hinder {
     //
 
     struct utc_timestamp_config {
-        std::string format;
+        const std::string format;
 
         explicit utc_timestamp_config(std::string fmt) : format(std::move(fmt)) {}
 
@@ -58,7 +58,7 @@ namespace hinder {
     };
 
     struct local_timestamp_config {
-        std::string                    format;
+        const std::string              format;
         const std::chrono::time_zone * timezone;
 
         local_timestamp_config(std::string fmt, const std::chrono::time_zone * tz = nullptr)
@@ -68,13 +68,15 @@ namespace hinder {
         static const local_timestamp_config iso_format;
     };
 
-    [[nodiscard]] auto
-        utc_timestamp(const utc_timestamp_config & config = utc_timestamp_config::iso_format)
-            -> std::string;
+    [[nodiscard]] auto utc_timestamp(
+        const utc_timestamp_config &                config = utc_timestamp_config::iso_format,
+        const std::chrono::system_clock::time_point now    = std::chrono::system_clock::now())
+        -> std::string;
 
-    [[nodiscard]] auto
-        local_timestamp(const local_timestamp_config & config = local_timestamp_config::iso_format)
-            -> std::string;
+    [[nodiscard]] auto local_timestamp(
+        const local_timestamp_config &              config = local_timestamp_config::iso_format,
+        const std::chrono::system_clock::time_point now    = std::chrono::system_clock::now())
+        -> std::string;
 
 }  // namespace hinder
 
