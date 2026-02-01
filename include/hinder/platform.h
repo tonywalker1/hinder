@@ -1,9 +1,9 @@
 //
-// hinder::exception
+// hinder::core
 //
 // MIT License
 //
-// Copyright (c) 2019-2021  Tony Walker
+// Copyright (c) 2021  Tony Walker
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,7 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_EXCEPTION_CONFIG_H
-#define HINDER_EXCEPTION_CONFIG_H
+#ifndef HINDER_PLATFORM_H
+#define HINDER_PLATFORM_H
 
-#include <hinder/core/format.h>
-
-namespace hinder {
-
-    struct exception_config {
-
-        //
-        // Set the message format, see include/hinder/core/format.h.
-        //
-        // The options are currently DEFAULT, USER, and STRUCTURED. The default is DEFAULT. ;-)
-        //
-        static message_format format;
-
-    };  // struct exception_config
-
-}  // namespace hinder
-
-#endif  // HINDER_EXCEPTION_CONFIG_H
+#endif  // HINDER_PLATFORM_H

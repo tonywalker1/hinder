@@ -24,7 +24,7 @@
 // SOFTWARE.
 //
 
-#include <hinder/core/timestamp.h>
+#include <hinder/timestamp.h>
 
 #include <chrono>
 #include <format>

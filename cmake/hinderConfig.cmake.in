@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+# Find required dependencies
+include(CMakeFindDependencyMacro)
+find_dependency(fmt REQUIRED)
+
+include("${CMAKE_CURRENT_LIST_DIR}/hinderTargets.cmake")
+
+check_required_components(hinder)

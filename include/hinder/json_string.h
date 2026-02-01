@@ -24,11 +24,11 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_JSON_H
-#define HINDER_MISC_JSON_H
+#ifndef HINDER_JSON_STRING_H
+#define HINDER_JSON_STRING_H
 
 #include <fmt/format.h>
-#include <hinder/core/compiler.h>
+#include <hinder/compiler.h>
 #include <type_traits>
 
 namespace hinder {
@@ -57,4 +57,4 @@ namespace hinder {
 
 }  // namespace hinder
 
-#endif  // HINDER_MISC_JSON_H
+#endif  // HINDER_JSON_STRING_H

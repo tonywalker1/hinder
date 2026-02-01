@@ -1,5 +1,5 @@
 //
-// hinder::misc
+// hinder::core
 //
 // MIT License
 //
@@ -24,32 +24,17 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_MISC_UNITS_H
-#define HINDER_MISC_UNITS_H
-
-#include <cstddef>
+#ifndef HINDER_FORMAT_H
+#define HINDER_FORMAT_H
 
 namespace hinder {
 
-    // Generate size in bytes from size in KiB, MiB, GiB, TiB.
-    // For example,
-    //     set_buffer(KiB(64));  // yields 64 * 1024 (or 65536) bytes
-    inline constexpr size_t KiB(size_t val) noexcept {
-        return val * 1'024;  // 2^10
-    }
-
-    inline constexpr size_t MiB(size_t val) noexcept {
-        return val * 1'048'576;  // 2^20
-    }
-
-    inline constexpr size_t GiB(size_t val) noexcept {
-        return val * 1'073'741'824;  // 2^30
-    }
-
-    inline constexpr size_t TiB(size_t val) noexcept {
-        return val * 1'099'511'627'776;  // 2^40
-    }
+    //
+    // Format for exceptions and assertions.
+    // The exact meaning of each depends on the module (e.g., hinder::exception).
+    //
+    enum struct message_format { DEFAULT, USER, STRUCTURED };
 
 }  // namespace hinder
 
-#endif  // HINDER_MISC_UNITS_H
+#endif  // HINDER_FORMAT_H
