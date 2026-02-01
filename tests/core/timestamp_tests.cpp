@@ -24,7 +24,7 @@
 // SOFTWARE.
 //
 
-#include <hinder/core/timestamp.h>
+#include <hinder/timestamp.h>
 
 #include <catch2/catch.hpp>
 #include <chrono>

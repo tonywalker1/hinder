@@ -47,7 +47,6 @@ ctest
 ctest -V
 
 # Run specific test executable directly
-./tests/assert/hinder_assert_tests
 ./tests/exception/hinder_exception_tests
 ./tests/misc/hinder_misc_tests
 ```
@@ -68,12 +67,6 @@ clang-tidy <file> -- -std=c++17 -I./include
 
 The project is organized into independent modules under `src/` and `include/hinder/`:
 
-- **assert** - Flexible assertion library with customizable handlers and formatted messages
-  - Supports pluggable assertion handlers (classic abort, throw exception, or custom)
-  - Uses std::format for message formatting
-  - Controlled by NDEBUG (disabled in release builds)
-  - Entry: `include/hinder/assert/assert.h`
-
 - **core** - Fundamental utilities used by other modules
   - `compiler.h` - Compiler abstraction macros (HINDER_LIKELY, HINDER_NODISCARD, etc.)
   - `platform.h` - Platform detection
@@ -82,6 +75,7 @@ The project is organized into independent modules under `src/` and `include/hind
   - Entry: `include/hinder/core/core.h`
 
 - **exception** - Exception utilities with formatted messages and structured output
+  - `HINDER_ASSERT()` - Debug-only assertion macro (disabled in release builds)
   - `HINDER_DEFINE_EXCEPTION()` - Macro to define new exception types
   - `HINDER_THROW()` - Throw with formatted message (std::format)
   - `HINDER_EXPECTS/ENSURES/INVARIANT()` - Contract checking macros
@@ -99,15 +93,11 @@ The project is organized into independent modules under `src/` and `include/hind
 **Header Organization**: Each module has a convenience header that includes all subcomponents
 (e.g., `hinder/core/core.h` includes all core headers).
 
-**CMake Targets**: Each library is built as a shared library with an alias:
-- `hinder::assert` (output: `libhinder_assert.so`)
-- `hinder::core` (output: `libhinder_core.so`)
-- `hinder::exception` (output: `libhinder_exception.so`)
-- `hinder::misc` (output: `libhinder_misc.so`)
+**CMake Targets**: The library is built as a single shared library:
+- `hinder::hinder` (output: `libhinder.so`)
 
 **Dependencies Between Modules**:
 - `core` - No internal dependencies (base module)
-- `assert` - Depends on `core`, uses `fmt` and `date-tz`
 - `exception` - Depends on `core`, uses `fmt`
 - `misc` - Minimal dependencies (mostly header-only)
 
@@ -138,11 +128,11 @@ Required libraries (must be available via `find_package`):
 
 The codebase uses several important macros:
 
-- **Assertion**: `HINDER_ASSERT(cond, fmt, ...)` - Checked only in debug builds
-- **Preconditions**: `HINDER_EXPECTS(cond, exception, fmt, ...)` - Always checked
-- **Postconditions**: `HINDER_ENSURES(cond, exception, fmt, ...)` - Always checked
-- **Invariants**: `HINDER_INVARIANT(cond, exception, fmt, ...)` - Always checked
-- **Exceptions**: `HINDER_THROW(exception, fmt, ...)` - Throw with formatted message
+- **Assertion**: `HINDER_ASSERT(cond, fmt, ...)` - Debug-only assertion (throws assertion_error)
+- **Preconditions**: `HINDER_EXPECTS(cond, exception)` - Always checked
+- **Postconditions**: `HINDER_ENSURES(cond, exception)` - Always checked
+- **Invariants**: `HINDER_INVARIANT(cond, exception)` - Always checked
+- **Exceptions**: `HINDER_THROW(exception)` - Throw with fluent API for formatted message
 - **Compiler hints**: `HINDER_LIKELY(x)`, `HINDER_UNLIKELY(x)`, `HINDER_NODISCARD`, `HINDER_NOOP`
 
 All formatting uses std::format syntax: `HINDER_THROW(my_error, "value {} exceeds limit {}", val, max)`
@@ -150,9 +140,8 @@ All formatting uses std::format syntax: `HINDER_THROW(my_error, "value {} exceed
 ### Testing Structure
 
 Tests mirror the source structure:
-- `tests/assert/` - Tests for assert module
-- `tests/core/` - Tests for core module (currently commented out in root CMakeLists.txt)
-- `tests/exception/` - Tests for exception module
+- `tests/core/` - Tests for core module
+- `tests/exception/` - Tests for exception module (includes HINDER_ASSERT tests)
 - `tests/misc/` - Tests for misc module
 
 Each test directory has:
@@ -188,3 +177,8 @@ The project enforces strict code quality:
   hicpp, modernize, performance, readability, etc.)
 - Use C++20 as minimum standard
 - Prefer compile-time checks and modern C++ idioms
+
+
+When moving a C++ header file from one module/directory, check to see if the header guard name indicates membership to a module/directory and should be similarly edited.
+
+When modifyiing source code with a copyright block at the top, check to see if the copyright year should be updated.

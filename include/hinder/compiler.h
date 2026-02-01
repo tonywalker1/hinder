@@ -3,7 +3,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2019-2021  Tony Walker
+// Copyright (c) 2019-2026  Tony Walker
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_CORE_COMPILER_H
-#define HINDER_CORE_COMPILER_H
+#ifndef HINDER_COMPILER_H
+#define HINDER_COMPILER_H
 
 //
 // Useful for making tests more readable
@@ -56,11 +56,11 @@
 // This macro is retained for backward compatibility but will be removed in a future version.
 // The project requires C++20, so [[nodiscard]] is always available.
 //
-#define HINDER_NODISCARD [[nodiscard]]
+// #define HINDER_NODISCARD [[nodiscard]]
 
 //
 // Compiles to nothing (i.e., a no-op)
 //
 #define HINDER_NOOP static_cast<void>(0)
 
-#endif  // HINDER_CORE_COMPILER_H
+#endif  // HINDER_COMPILER_H

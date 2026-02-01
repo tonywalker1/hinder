@@ -25,7 +25,7 @@
 //
 
 #include <catch2/catch.hpp>
-#include <hinder/misc/json_string.h>
+#include <hinder/json.h>
 #include <string>
 
 using namespace hinder;

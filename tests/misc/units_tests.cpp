@@ -25,7 +25,7 @@
 //
 
 #include <catch2/catch.hpp>
-#include <hinder/misc/units.h>
+#include <hinder/units.h>
 
 using namespace hinder;
 

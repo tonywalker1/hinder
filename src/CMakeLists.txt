@@ -4,15 +4,23 @@
 find_package(fmt REQUIRED)
 
 ################################################################################
-# build subproject
+# collect all source files
 ################################################################################
-add_library(exception SHARED
-    exception_config.cpp
-    string.cpp
+set(HINDER_SOURCES
+    # core
+    core/timestamp.cpp
+    # exception
+    exception/exception.cpp
+    exception/format.cpp
 )
 
-set_target_properties(exception PROPERTIES
-    OUTPUT_NAME "hinder_exception"
+################################################################################
+# build library
+################################################################################
+add_library(hinder SHARED ${HINDER_SOURCES})
+
+set_target_properties(hinder PROPERTIES
+    OUTPUT_NAME "hinder"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     CXX_STANDARD ${CMAKE_CXX_STANDARD}
@@ -20,65 +28,65 @@ set_target_properties(exception PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-add_library(hinder::exception ALIAS exception)
+add_library(hinder::hinder ALIAS hinder)
 
-target_compile_options(exception PRIVATE ${HINDER_WARNING_FLAGS})
+target_compile_options(hinder PRIVATE ${HINDER_WARNING_FLAGS})
 
-target_include_directories(exception
+target_include_directories(hinder
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(exception
+target_link_libraries(hinder
     PUBLIC fmt::fmt
-    PUBLIC hinder::core
 )
 
 ################################################################################
 # install library and headers
 ################################################################################
-install(TARGETS exception
-    EXPORT hinder_exceptionTargets
+install(TARGETS hinder
+    EXPORT hinderTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
+# Install all headers
 install(
-    DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder/exception
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hinder
+    DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 ################################################################################
 # install CMake package config files
 ################################################################################
-set(HINDER_EXCEPTION_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/hinder_exception")
+set(HINDER_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/hinder")
 
-install(EXPORT hinder_exceptionTargets
-    FILE hinder_exceptionTargets.cmake
+install(EXPORT hinderTargets
+    FILE hinderTargets.cmake
     NAMESPACE hinder::
-    DESTINATION ${HINDER_EXCEPTION_CMAKE_CONFIG_DIR}
+    DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
 )
 
 # Generate package config file
 configure_package_config_file(
-    "${PROJECT_SOURCE_DIR}/cmake/hinder_exceptionConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/hinder_exceptionConfig.cmake"
-    INSTALL_DESTINATION ${HINDER_EXCEPTION_CMAKE_CONFIG_DIR}
+    "${PROJECT_SOURCE_DIR}/cmake/hinderConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/hinderConfig.cmake"
+    INSTALL_DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
 )
 
 # Generate package version file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/hinder_exceptionConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/hinderConfigVersion.cmake"
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
 install(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/hinder_exceptionConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/hinder_exceptionConfigVersion.cmake"
-    DESTINATION ${HINDER_EXCEPTION_CMAKE_CONFIG_DIR}
+        "${CMAKE_CURRENT_BINARY_DIR}/hinderConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/hinderConfigVersion.cmake"
+    DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
 )

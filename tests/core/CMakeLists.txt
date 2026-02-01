@@ -13,8 +13,8 @@ add_executable(hinder_core_tests
 
 target_link_libraries(hinder_core_tests
     Catch2::Catch2
-    hinder::core
-    )
+    hinder::hinder
+)
 
 include(CTest)
 include(Catch)

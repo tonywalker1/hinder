@@ -24,8 +24,8 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_CORE_TIMESTAMP_H
-#define HINDER_CORE_TIMESTAMP_H
+#ifndef HINDER_TIMESTAMP_H
+#define HINDER_TIMESTAMP_H
 
 #include <chrono>
 #include <string>
@@ -80,4 +80,4 @@ namespace hinder {
 
 }  // namespace hinder
 
-#endif  // HINDER_CORE_TIMESTAMP_H
+#endif  // HINDER_TIMESTAMP_H
