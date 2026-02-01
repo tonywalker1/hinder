@@ -83,8 +83,19 @@ HINDER_INVARIANT(cond, except, ...);   // class invariants
 For example:
 
 ```c++
-HINDER_EXPECTS(answer == 42, "The answer is 42 not {}", answer);
+HINDER_EXPECTS(answer == 42, universe_error, "The answer is 42 not {}", answer);
 ```
+
+### Debug Assertions
+
+For debug-only checks that should be compiled out in release builds, use HINDER_ASSERT:
+
+```c++
+HINDER_ASSERT(answer == 42, "The answer is 42 not {}", answer);
+```
+
+HINDER_ASSERT is only active in debug builds (when NDEBUG is not defined). In release builds, it
+compiles to nothing. When the assertion fails, it throws a `hinder::assertion_error` exception.
 
 ### Nested Exceptions
 
@@ -151,39 +162,9 @@ cmake -DHINDER_WITH_EXCEPTION_SOURCE=OFF <path_to_source>
 
 See [CMake options](./cmake_options.md) for HINDER_WITH_EXCEPTION_SOURCE.
 
-### Changing the Default Format
-
-You may change the message format via ```exception_config::format```. For example,
-```c++
-#include <hinder/exception/exception.h>
-int main()
-{
-    hinder::exception_config::format = message_format::DEFAULT;
-    ...
-}
-```
-Currently, the options are DEFAULT, USER, or STRUCTRUED.
-
-Setting the **USER** option allows you to entirely control the message format. NOTE, you must use
-positional arguments (e.g., {1}) in your format strings.
-
-Just like argv in main(), the exception name is always {0}. If you enabled source file names and
-line numbers (the default), then the file is {1} and the line numbers is {2}. As an example, you
-could write:
-
-```c++
-// with HINDER_WITH_EXCEPTION_SOURCE=ON
-HINDER_THROW(my_exception, "The answer is {3} not {4} [{0} at {1},{2}]", 42, 2);
-// >> The answer is 42 not 2 [my_exception at @file, line]
-
-// with HINDER_WITH_EXCEPTION_SOURCE=OFF
-HINDER_THROW(my_exception, "The answer is {1} not {2} [{0}]", 42, 2);
-// >> The answer is 42 not 2 [my_exception]
-```
-
 ### Structured Logging
 
-Setting the **STRUCTURED** formatting option will produce a JSON object similar to the following:
+The library supports structured exception output as JSON objects for use with logging systems:
 
 ```json
 {
@@ -198,11 +179,8 @@ Setting the **STRUCTURED** formatting option will produce a JSON object similar 
 }
 ```
 
-In the above example, I added line breaks to aide readability. The actual output is a single line (
-multiline output in logs can be quite problematic). Note: the above output also contains the time of
-the message in UTC. I strongly recommend logging in UTC and that is the only option at the moment.
-If you want to change the output from the default ISO format, you can do that by changing
-timestamp_format::utc_format, see the code for the current string.
+The actual output is a single line (multiline output in logs can be problematic). Timestamps are
+in UTC using ISO 8601 format.
 
 ### Adding a Timestamp
 
