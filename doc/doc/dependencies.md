@@ -1,18 +1,11 @@
 # Dependencies
 
-All modules use C++20 standard library features (`<format>` and `<chrono>`).
+The hinder library uses C++20 standard library features (`<format>` and `<chrono>`).
 
-### hinder::assert
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
+### Runtime Dependencies
 
-### hinder::core
+None. The library is self-contained and only depends on the C++20 standard library.
 
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
+### Test Dependencies
 
-### hinder::exception
-
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
-
-### hinder::misc
-
-* Catch2 (When testing is enabled; https://github.com/catchorg/Catch2)
+* Catch2 (when testing is enabled; https://github.com/catchorg/Catch2)
