@@ -67,26 +67,15 @@ message(STATUS "****************************************************************
 ################################################################################
 
 ################################################################################
-# build subprojects
+# build library
 ################################################################################
-add_subdirectory(src/assert)
-add_subdirectory(src/core)
-add_subdirectory(src/exception)
-add_subdirectory(src/misc)
+add_subdirectory(src)
 
 if (HINDER_WITH_TESTS)
     message(STATUS "Testing is enabled. Tests will be built.")
     enable_testing()
-    add_subdirectory(tests/assert)
     add_subdirectory(tests/core)
     add_subdirectory(tests/exception)
     add_subdirectory(tests/misc)
 endif ()
 
-################################################################################
-# install library and subprojects
-################################################################################
-install(
-    FILES "${PROJECT_SOURCE_DIR}/cmake/hinderConfig.cmake"
-    DESTINATION "lib/cmake/hinder"
-)

@@ -4,14 +4,23 @@
 find_package(fmt REQUIRED)
 
 ################################################################################
-# build subproject
+# collect all source files
 ################################################################################
-add_library(assert SHARED
-    assert_config.cpp
+set(HINDER_SOURCES
+    # core
+    core/timestamp.cpp
+    # exception
+    exception/exception.cpp
+    exception/format.cpp
 )
 
-set_target_properties(assert PROPERTIES
-    OUTPUT_NAME "hinder_assert"
+################################################################################
+# build library
+################################################################################
+add_library(hinder SHARED ${HINDER_SOURCES})
+
+set_target_properties(hinder PROPERTIES
+    OUTPUT_NAME "hinder"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     CXX_STANDARD ${CMAKE_CXX_STANDARD}
@@ -19,65 +28,65 @@ set_target_properties(assert PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-add_library(hinder::assert ALIAS assert)
+add_library(hinder::hinder ALIAS hinder)
 
-target_compile_options(assert PRIVATE ${HINDER_WARNING_FLAGS})
+target_compile_options(hinder PRIVATE ${HINDER_WARNING_FLAGS})
 
-target_include_directories(assert
+target_include_directories(hinder
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(assert
+target_link_libraries(hinder
     PUBLIC fmt::fmt
-    PUBLIC hinder::core
 )
 
 ################################################################################
 # install library and headers
 ################################################################################
-install(TARGETS assert
-    EXPORT hinder_assertTargets
+install(TARGETS hinder
+    EXPORT hinderTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
+# Install all headers
 install(
-    DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder/assert
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hinder
+    DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 ################################################################################
 # install CMake package config files
 ################################################################################
-set(HINDER_ASSERT_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/hinder_assert")
+set(HINDER_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/hinder")
 
-install(EXPORT hinder_assertTargets
-    FILE hinder_assertTargets.cmake
+install(EXPORT hinderTargets
+    FILE hinderTargets.cmake
     NAMESPACE hinder::
-    DESTINATION ${HINDER_ASSERT_CMAKE_CONFIG_DIR}
+    DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
 )
 
 # Generate package config file
 configure_package_config_file(
-    "${PROJECT_SOURCE_DIR}/cmake/hinder_assertConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/hinder_assertConfig.cmake"
-    INSTALL_DESTINATION ${HINDER_ASSERT_CMAKE_CONFIG_DIR}
+    "${PROJECT_SOURCE_DIR}/cmake/hinderConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/hinderConfig.cmake"
+    INSTALL_DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
 )
 
 # Generate package version file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/hinder_assertConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/hinderConfigVersion.cmake"
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
 install(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/hinder_assertConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/hinder_assertConfigVersion.cmake"
-    DESTINATION ${HINDER_ASSERT_CMAKE_CONFIG_DIR}
+        "${CMAKE_CURRENT_BINARY_DIR}/hinderConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/hinderConfigVersion.cmake"
+    DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
 )
