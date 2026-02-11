@@ -1,21 +1,22 @@
 ################################################################################
 # find dependencies
 ################################################################################
-find_package(Catch2 REQUIRED)
+find_package(GTest REQUIRED)
 
 ################################################################################
 # build project
 ################################################################################
 add_executable(hinder_misc_tests
-    main.cpp
+    json_string_tests.cpp
     units_tests.cpp
-    )
+)
 
 target_link_libraries(hinder_misc_tests
-    Catch2::Catch2
+    GTest::gtest
+    GTest::gtest_main
     hinder::hinder
 )
 
 include(CTest)
-include(Catch)
-catch_discover_tests(hinder_misc_tests)
+include(GoogleTest)
+gtest_discover_tests(hinder_misc_tests)
