@@ -24,28 +24,26 @@
 // SOFTWARE.
 //
 
-#include <catch2/catch.hpp>
+#include <gtest/gtest.h>
 #include <hinder/units.h>
 
 using namespace hinder;
 
-SCENARIO("specifying a memory block", "[misc_units]") {
-    THEN("the block size should be correct") {
-        // trivial, but let's check anyway
-        size_t block = 1;
-        CHECK(KiB(1) == block * 1024);
-        CHECK(MiB(1) == block * 1024 * 1024);
-        CHECK(GiB(1) == block * 1024 * 1024 * 1024);
-        CHECK(TiB(1) == block * 1024 * 1024 * 1024 * 1024);
+TEST(Units, SpecifyingAMemoryBlock) {
+    // trivial, but let's check anyway
+    size_t block = 1;
+    EXPECT_EQ(KiB(1), block * 1024);
+    EXPECT_EQ(MiB(1), block * 1024 * 1024);
+    EXPECT_EQ(GiB(1), block * 1024 * 1024 * 1024);
+    EXPECT_EQ(TiB(1), block * 1024 * 1024 * 1024 * 1024);
 
-        block = 4;
-        CHECK(KiB(4) == block * 1024);
-        CHECK(MiB(4) == block * 1024 * 1024);
-        CHECK(GiB(4) == block * 1024 * 1024 * 1024);
-        CHECK(TiB(4) == block * 1024 * 1024 * 1024 * 1024);
+    block = 4;
+    EXPECT_EQ(KiB(4), block * 1024);
+    EXPECT_EQ(MiB(4), block * 1024 * 1024);
+    EXPECT_EQ(GiB(4), block * 1024 * 1024 * 1024);
+    EXPECT_EQ(TiB(4), block * 1024 * 1024 * 1024 * 1024);
 
-        CHECK(MiB(4) == KiB(4) * 1024);
-        CHECK(GiB(4) == MiB(4) * 1024);
-        CHECK(TiB(4) == GiB(4) * 1024);
-    }
+    EXPECT_EQ(MiB(4), KiB(4) * 1024);
+    EXPECT_EQ(GiB(4), MiB(4) * 1024);
+    EXPECT_EQ(TiB(4), GiB(4) * 1024);
 }

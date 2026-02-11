@@ -32,12 +32,12 @@ The project uses multiple build configurations simultaneously in `build/<kit>-<b
 
 - `HINDER_WITH_TESTS` - Build tests (default: ON)
 - `HINDER_WITH_EXCEPTION_SOURCE` - Add `__FILE__` and `__LINE__` to exception messages (default: ON)
-- `CMAKE_CXX_STANDARD` - C++ standard version (default: 20, minimum: 20)
+- `CMAKE_CXX_STANDARD` - C++ standard version (default: 23, minimum: 23)
 - `CMAKE_BUILD_TYPE` - Build type (default: Release)
 
 ### Running Tests
 
-Tests use Catch2 framework and are automatically discovered via CTest:
+Tests use Google Test framework and are automatically discovered via CTest:
 
 ```bash
 # From build directory - run all tests
@@ -98,7 +98,7 @@ The project is organized into independent modules under `src/` and `include/hind
 
 **Dependencies Between Modules**:
 - `core` - No internal dependencies (base module)
-- `exception` - Depends on `core`, uses `fmt`
+- `exception` - Depends on `core`
 - `misc` - Minimal dependencies (mostly header-only)
 
 ### Configurable Utility Pattern
@@ -119,10 +119,10 @@ Example: `timestamp.h` config types with `iso_format` static defaults, timezone 
 
 ### External Dependencies
 
-The project uses C++20 standard library features (`<format>` and `<chrono>`) for all formatting and timestamp functionality.
+The project uses C++23 standard library features (`<format>` and `<chrono>`) for all formatting and timestamp functionality.
 
 Required libraries (must be available via `find_package`):
-- **Catch2** - Testing framework (only when `HINDER_WITH_TESTS=ON`)
+- **GTest** - Google Test testing framework (only when `HINDER_WITH_TESTS=ON`)
 
 ### Macro Conventions
 
@@ -145,9 +145,8 @@ Tests mirror the source structure:
 - `tests/misc/` - Tests for misc module
 
 Each test directory has:
-- `main.cpp` - Catch2 test runner setup
 - `*_tests.cpp` - Actual test cases
-- `CMakeLists.txt` - Uses `catch_discover_tests()` for CTest integration
+- `CMakeLists.txt` - Uses `gtest_discover_tests()` for CTest integration
 
 ## Development Workflow
 
@@ -175,7 +174,7 @@ The project enforces strict code quality:
 - Follow `.clang-format` configuration (appears to be LLVM-based style)
 - Pass `.clang-tidy` checks (extensive checks enabled: boost, bugprone, cert, cppcoreguidelines,
   hicpp, modernize, performance, readability, etc.)
-- Use C++20 as minimum standard
+- Use C++23 as minimum standard
 - Prefer compile-time checks and modern C++ idioms
 
 

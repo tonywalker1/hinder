@@ -34,13 +34,14 @@
 #define HINDER_CPP_14 201'402L
 #define HINDER_CPP_17 201'703L
 #define HINDER_CPP_20 202'002L
+#define HINDER_CPP_23 202'302L
 
 //
 // Branch prediction hints.
 //
 // NOTE: [[likely]] and [[unlikely]] attributes can only be used with if-statements, not ternary
 // operators. These macros use __builtin_expect when C++20 attributes cannot be used directly.
-// The project requires C++20, so these macros always expand to the __builtin form for use in
+// The project requires C++23, so these macros always expand to the __builtin form for use in
 // ternary expressions throughout the codebase.
 //
 #if defined(__clang__) || defined(__GNUC__)
@@ -54,7 +55,7 @@
 //
 // DEPRECATED: Use [[nodiscard]] attribute directly.
 // This macro is retained for backward compatibility but will be removed in a future version.
-// The project requires C++20, so [[nodiscard]] is always available.
+// The project requires C++23, so [[nodiscard]] is always available.
 //
 // #define HINDER_NODISCARD [[nodiscard]]
 
