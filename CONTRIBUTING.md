@@ -46,12 +46,12 @@ expected to uphold this code.
 
 ### C++ Standard
 
-This project requires **C++20** as the minimum standard.
+This project requires **C++23** as the minimum standard.
 
 ### Code Style
 
 - Follow the `.clang-format` configuration: `clang-format -i <file>`
-- Pass `.clang-tidy` checks: `clang-tidy <file> -- -std=c++20 -I./include`
+- Pass `.clang-tidy` checks: `clang-tidy <file> -- -std=c++23 -I./include`
 - Use modern C++ idioms and prefer compile-time checks
 - Write clear, simple, readable code
 

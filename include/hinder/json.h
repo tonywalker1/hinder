@@ -27,7 +27,6 @@
 #ifndef HINDER_JSON_H
 #define HINDER_JSON_H
 
-#include <fmt/format.h>
 #include <hinder/compiler.h>
 #include <type_traits>
 

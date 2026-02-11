@@ -28,7 +28,7 @@ See the documentation in the [doc directory](./doc/contents.md).
 
 ### C++ Standard
 
-If you do not set CMAKE_CXX_STANDARD, the default is C++20. The minimum supported standard is C++20.
+If you do not set CMAKE_CXX_STANDARD, the default is C++23. The minimum supported standard is C++23.
 
 ### Compilers
 

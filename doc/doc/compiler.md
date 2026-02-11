@@ -14,6 +14,7 @@ that, I provide the following macros you can use:
 #define HINDER_CPP_14 201402L;
 #define HINDER_CPP_17 201703L;
 #define HINDER_CPP_20 202002L;
+#define HINDER_CPP_23 202302L;
 ```
 
 ## HINDER_LIKELY and HINDER_UNLIKELY

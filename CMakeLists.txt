@@ -26,7 +26,7 @@ endif ()
 # global build settings
 ################################################################################
 # Set C++ standard as project default (targets can override if needed)
-set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard version")
+set(CMAKE_CXX_STANDARD 23 CACHE STRING "C++ standard version")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

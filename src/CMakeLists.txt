@@ -1,9 +1,4 @@
 ################################################################################
-# find dependencies
-################################################################################
-find_package(fmt REQUIRED)
-
-################################################################################
 # collect all source files
 ################################################################################
 set(HINDER_SOURCES
@@ -36,10 +31,6 @@ target_include_directories(hinder
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
-)
-
-target_link_libraries(hinder
-    PUBLIC fmt::fmt
 )
 
 ################################################################################
