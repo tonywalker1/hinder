@@ -19,6 +19,10 @@
   debug assertions (HINDER_ASSERT), throwing/catching exceptions (HINDER_THROW), and formatting error
   messages (using std::format). Also supports structured exception messages.
 
+* **[expected](./doc/expected.md):** Structured error values for `std::expected<T, hinder::error>`.
+  Mirrors the exception module's fluent API and data model as a plain value type. Includes
+  `hinder::fail()`, `HINDER_FAIL()`, and `to_string()`/`to_json()` formatting.
+
 * **[timestamp](./doc/timestamp.md):** Produce the current time as an ISO formatted string.
   Perfect for error/log messages.
 
