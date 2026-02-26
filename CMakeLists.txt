@@ -76,6 +76,7 @@ if (HINDER_WITH_TESTS)
     enable_testing()
     add_subdirectory(tests/core)
     add_subdirectory(tests/exception)
+    add_subdirectory(tests/expected)
     add_subdirectory(tests/misc)
 endif ()
 

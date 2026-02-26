@@ -29,6 +29,9 @@
 
 #include <cstdint>
 #include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
 #include <variant>
 
 namespace hinder {
@@ -50,6 +53,54 @@ namespace hinder {
     // Convert an exception_value to a string representation.
     //
     [[nodiscard]] auto value_to_string(exception_value const& v) -> std::string;
+
+    namespace detail {
+
+        // Type trait to detect string-like types.
+        // Uses std::decay_t which converts arrays to pointers.
+        template<typename T>
+        struct is_string_like : std::false_type {};
+
+        template<>
+        struct is_string_like<std::string> : std::true_type {};
+
+        template<>
+        struct is_string_like<std::string_view> : std::true_type {};
+
+        template<>
+        struct is_string_like<char const*> : std::true_type {};
+
+        template<>
+        struct is_string_like<char*> : std::true_type {};
+
+        template<typename T>
+        inline constexpr bool is_string_like_v = is_string_like<std::decay_t<T>>::value;
+
+        // Convert arbitrary types to exception_value.
+        template<typename T>
+        auto to_exception_value(T&& value) -> exception_value {
+            using decayed = std::decay_t<T>;
+
+            if constexpr (std::is_same_v<decayed, bool>) {
+                return value;
+            } else if constexpr (std::is_same_v<std::remove_cvref_t<T>, std::monostate>) {
+                return value;
+            } else if constexpr (is_string_like_v<T>) {
+                return std::string(std::forward<T>(value));
+            } else if constexpr (std::is_floating_point_v<decayed>) {
+                return static_cast<double>(value);
+            } else if constexpr (std::is_signed_v<decayed> && std::is_integral_v<decayed>) {
+                return static_cast<std::int64_t>(value);
+            } else if constexpr (std::is_unsigned_v<decayed> && std::is_integral_v<decayed>) {
+                return static_cast<std::uint64_t>(value);
+            } else {
+                static_assert(std::is_same_v<decayed, void>,
+                    "Unsupported type for with(). "
+                    "Supported types: bool, integers, floating point, strings.");
+            }
+        }
+
+    }  // namespace detail
 
 }  // namespace hinder
 

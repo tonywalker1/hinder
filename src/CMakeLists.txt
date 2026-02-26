@@ -7,6 +7,9 @@ set(HINDER_SOURCES
     # exception
     exception/exception.cpp
     exception/format.cpp
+    # expected
+    expected/error.cpp
+    expected/format.cpp
 )
 
 ################################################################################
