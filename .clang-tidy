@@ -10,12 +10,14 @@ Checks: >-
     cppcoreguidelines-*,
     hicpp-*,
     llvm-*,
-    llvmlibc-*,
+    -llvm-header-guard,
+    -llvm-prefer-static-over-anonymous-namespace,
     misc-*,
     modernize-*,
     openmp-*,
     performance-*,
     portability-*,
+    -portability-avoid-pragma-once,
     readability-*
 
 # Treat warnings as errors (new option - set to empty to not enforce)

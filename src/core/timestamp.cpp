@@ -31,23 +31,30 @@
 
 namespace hinder {
 
-    // Static member definitions
-    const utc_timestamp_config utc_timestamp_config::iso_format {
-        "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z"};
+    // iso_format accessors: function-local statics initialized on first call.
+    // Exceptions propagate to the caller rather than calling std::terminate().
+    auto utc_timestamp_config::iso_format() -> utc_timestamp_config const & {
+        static const utc_timestamp_config instance {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z"};
+        return instance;
+    }
 
-    const local_timestamp_config local_timestamp_config::iso_format {
-        "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
-        nullptr  // Resolved to std::chrono::current_zone() at call time
-    };
+    auto local_timestamp_config::iso_format() -> local_timestamp_config const & {
+        static const local_timestamp_config instance {
+            "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
+            nullptr  // Resolved to std::chrono::current_zone() at call time
+        };
+        return instance;
+    }
 
     // Function implementations
     auto utc_timestamp(const utc_timestamp_config &                config,
                        const std::chrono::system_clock::time_point now) -> std::string {
 
         // break into ymd and time-of-day
-        auto dp  = std::chrono::floor<std::chrono::days>(now);
-        auto ymd = std::chrono::year_month_day(dp);
-        auto tod = std::chrono::hh_mm_ss(now - dp);
+        // NOLINTNEXTLINE(misc-include-cleaner): std::chrono::days is in <chrono>
+        auto day_pt = std::chrono::floor<std::chrono::days>(now);
+        auto ymd    = std::chrono::year_month_day(day_pt);
+        auto tod    = std::chrono::hh_mm_ss(now - day_pt);
 
         // convert the time to a string
         auto year       = static_cast<int>(ymd.year());
@@ -59,7 +66,7 @@ namespace hinder {
         auto subseconds = tod.subseconds().count();
 
         return std::vformat(
-            config.format,
+            config.format(),
             std::make_format_args(year, month, day, hours, minutes, seconds, subseconds));
     }
 
@@ -67,13 +74,15 @@ namespace hinder {
                          const std::chrono::system_clock::time_point now) -> std::string {
         // current time in desired time zone
         // Resolve nullptr to current_zone() at call time (handles TZ environment changes)
-        auto tz = config.timezone != nullptr ? config.timezone : std::chrono::current_zone();
-        auto t  = std::chrono::zoned_time(tz, now);
+        const auto * zone  = config.timezone() != nullptr ? config.timezone()
+                                                         : std::chrono::current_zone();
+        auto         local = std::chrono::zoned_time(zone, now);
 
         // break into ymd and time-of-day
-        auto dp  = std::chrono::floor<std::chrono::days>(t.get_local_time());
-        auto ymd = std::chrono::year_month_day(dp);
-        auto tod = std::chrono::hh_mm_ss(t.get_local_time() - dp);
+        // NOLINTNEXTLINE(misc-include-cleaner): std::chrono::days is in <chrono>
+        auto day_pt = std::chrono::floor<std::chrono::days>(local.get_local_time());
+        auto ymd    = std::chrono::year_month_day(day_pt);
+        auto tod    = std::chrono::hh_mm_ss(local.get_local_time() - day_pt);
 
         // convert the time to a string
         auto year       = static_cast<int>(ymd.year());
@@ -83,10 +92,10 @@ namespace hinder {
         auto minutes    = tod.minutes().count();
         auto seconds    = tod.seconds().count();
         auto subseconds = tod.subseconds().count();
-        auto tz_name    = t.get_time_zone()->name();
+        auto tz_name    = local.get_time_zone()->name();
 
         return std::vformat(
-            config.format,
+            config.format(),
             std::make_format_args(year, month, day, hours, minutes, seconds, subseconds, tz_name));
     }
 

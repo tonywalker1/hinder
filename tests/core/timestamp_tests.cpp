@@ -39,7 +39,7 @@ TEST(Timestamp, UtcTimestampWithDefaultISOFormat) {
     auto ymd = 2'021y / April / 14d;
     auto tp  = sys_days {ymd} + 14h + 41min + 26s + 833'393'854ns;
 
-    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format, tp);
+    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format(), tp);
 
     ASSERT_EQ(result, "2021-04-14T14:41:26.833393854Z");
 }
@@ -60,7 +60,7 @@ TEST(Timestamp, UtcTimestampWithLeapYearDate) {
     auto ymd = 2'024y / February / 29d;
     auto tp  = sys_days {ymd} + 23h + 59min + 59s + 999'999'999ns;
 
-    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format, tp);
+    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format(), tp);
 
     ASSERT_EQ(result, "2024-02-29T23:59:59.999999999Z");
 }
@@ -69,7 +69,7 @@ TEST(Timestamp, UtcTimestampWithEpochTime) {
     // Test with Unix epoch: 1970-01-01 00:00:00.000000000 UTC
     auto tp = system_clock::time_point {};
 
-    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format, tp);
+    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format(), tp);
 
     ASSERT_EQ(result, "1970-01-01T00:00:00.000000000Z");
 }
@@ -99,7 +99,7 @@ TEST(Timestamp, LocalTimestampWithDefaultISOFormatUsingCurrentTimezone) {
     auto ymd = 2'021y / April / 14d;
     auto tp  = sys_days {ymd} + 14h + 41min + 26s + 833'393'854ns;
 
-    auto result = hinder::local_timestamp(hinder::local_timestamp_config::iso_format, tp);
+    auto result = hinder::local_timestamp(hinder::local_timestamp_config::iso_format(), tp);
 
     // Result should contain the timestamp and timezone name
     // We can't predict the exact timezone, but we can verify the format structure

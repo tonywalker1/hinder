@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::core
 //
@@ -24,17 +26,17 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_COMPILER_H
-#define HINDER_COMPILER_H
-
 //
 // Useful for making tests more readable
 //
+// NOLINTBEGIN(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum)
+// Used in #if preprocessor directives; neither constexpr nor enum values work in #if expressions.
 #define HINDER_CPP_11 201'103L
 #define HINDER_CPP_14 201'402L
 #define HINDER_CPP_17 201'703L
 #define HINDER_CPP_20 202'002L
 #define HINDER_CPP_23 202'302L
+// NOLINTEND(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum)
 
 //
 // Branch prediction hints.
@@ -44,6 +46,7 @@
 // The project requires C++23, so these macros always expand to the __builtin form for use in
 // ternary expressions throughout the codebase.
 //
+// NOLINTBEGIN(cppcoreguidelines-macro-usage): wraps __builtin_expect; compiler-conditional
 #if defined(__clang__) || defined(__GNUC__)
     #define HINDER_LIKELY(cond)   __builtin_expect((cond), 1)
     #define HINDER_UNLIKELY(cond) __builtin_expect((cond), 0)
@@ -51,6 +54,7 @@
     #define HINDER_LIKELY(cond)   (cond)
     #define HINDER_UNLIKELY(cond) (cond)
 #endif
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 //
 // DEPRECATED: Use [[nodiscard]] attribute directly.
@@ -64,4 +68,3 @@
 //
 #define HINDER_NOOP static_cast<void>(0)
 
-#endif  // HINDER_COMPILER_H

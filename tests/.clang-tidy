@@ -1,0 +1,11 @@
+---
+# Suppress checks that are inappropriate for test code.
+# Tests legitimately use magic numbers (test data values), dereference
+# optionals after ASSERT_TRUE guards that tidy cannot follow, and use
+# the idiomatic anonymous-namespace pattern rather than static.
+Checks: >-
+    -bugprone-unchecked-optional-access,
+    -cppcoreguidelines-avoid-magic-numbers,
+    -llvm-prefer-static-over-anonymous-namespace,
+    -readability-magic-numbers
+...

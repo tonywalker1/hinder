@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::expected
 //
@@ -24,9 +26,4 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_EXPECTED_H
-#define HINDER_EXPECTED_H
-
-#include <hinder/expected/error.h>
-
-#endif  // HINDER_EXPECTED_H
+#include <hinder/expected/error.h>  // NOLINT(misc-include-cleaner): convenience umbrella header

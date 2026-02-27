@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::core
 //
@@ -24,11 +26,9 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_TIMESTAMP_H
-#define HINDER_TIMESTAMP_H
-
 #include <chrono>
 #include <string>
+#include <utility>
 
 namespace hinder {
 
@@ -49,35 +49,44 @@ namespace hinder {
     // These are convenience functions that probably should only be used for error/log messages.
     //
 
-    struct utc_timestamp_config {
-        const std::string format;
+    class utc_timestamp_config {
+    public:
+        explicit utc_timestamp_config(std::string fmt) : m_format(std::move(fmt)) {}
 
-        explicit utc_timestamp_config(std::string fmt) : format(std::move(fmt)) {}
+        [[nodiscard]] auto format() const -> std::string const & { return m_format; }
 
-        static const utc_timestamp_config iso_format;
+        [[nodiscard]] static auto iso_format() -> utc_timestamp_config const &;
+
+    private:
+        std::string m_format;
     };
 
-    struct local_timestamp_config {
-        const std::string              format;
-        const std::chrono::time_zone * timezone;
+    class local_timestamp_config {
+    public:
+        explicit local_timestamp_config(std::string                    fmt,
+                                        const std::chrono::time_zone * zone = nullptr)
+        : m_format(std::move(fmt)),
+          m_timezone(zone) {}
 
-        local_timestamp_config(std::string fmt, const std::chrono::time_zone * tz = nullptr)
-        : format(std::move(fmt)),
-          timezone(tz) {}
+        [[nodiscard]] auto format() const -> std::string const & { return m_format; }
+        [[nodiscard]] auto timezone() const -> const std::chrono::time_zone * { return m_timezone; }
 
-        static const local_timestamp_config iso_format;
+        [[nodiscard]] static auto iso_format() -> local_timestamp_config const &;
+
+    private:
+        std::string                    m_format;
+        const std::chrono::time_zone * m_timezone;
     };
 
-    [[nodiscard]] auto utc_timestamp(
-        const utc_timestamp_config &                config = utc_timestamp_config::iso_format,
-        const std::chrono::system_clock::time_point now    = std::chrono::system_clock::now())
-        -> std::string;
+    [[nodiscard]] auto
+        utc_timestamp(const utc_timestamp_config & config       = utc_timestamp_config::iso_format(),
+                      std::chrono::system_clock::time_point now = std::chrono::system_clock::now())
+            -> std::string;
 
     [[nodiscard]] auto local_timestamp(
-        const local_timestamp_config &              config = local_timestamp_config::iso_format,
-        const std::chrono::system_clock::time_point now    = std::chrono::system_clock::now())
+        const local_timestamp_config &        config = local_timestamp_config::iso_format(),
+        std::chrono::system_clock::time_point now    = std::chrono::system_clock::now())
         -> std::string;
 
 }  // namespace hinder
 
-#endif  // HINDER_TIMESTAMP_H

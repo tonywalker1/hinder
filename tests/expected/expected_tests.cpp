@@ -6,10 +6,15 @@
 // Copyright (c) 2019-2026  Tony Walker
 //
 
-#include <expected>
-#include <hinder/expected/error.h>
 #include <gtest/gtest.h>
+#include <hinder/expected/error.h>
+
+#include <cstdint>
+#include <expected>
+#include <format>
 #include <string>
+#include <utility>
+#include <variant>
 
 namespace {
 
@@ -30,12 +35,12 @@ namespace {
     TEST(ErrorConstruction, CapturesSourceLocation) {
         auto err = hinder::error("test_error");
         EXPECT_NE(err.location().file_name(), nullptr);
-        EXPECT_GT(err.location().line(), 0u);
+        EXPECT_GT(err.location().line(), 0U);
     }
 
     TEST(ErrorConstruction, EmptyByDefault) {
         auto err = hinder::error();
-        EXPECT_EQ(err.size(), 0u);
+        EXPECT_EQ(err.size(), 0U);
     }
 
     // ========================================================================
@@ -94,12 +99,9 @@ namespace {
     }
 
     TEST(FluentApi, ChainMultipleWithCalls) {
-        auto err = hinder::error()
-            .message("failed")
-            .with("code", 1)
-            .with("path", "/tmp")
-            .with("retried");
-        EXPECT_EQ(err.size(), 4u);
+        auto err =
+            hinder::error().message("failed").with("code", 1).with("path", "/tmp").with("retried");
+        EXPECT_EQ(err.size(), 4U);
         EXPECT_TRUE(err.contains("message"));
         EXPECT_TRUE(err.contains("code"));
         EXPECT_TRUE(err.contains("path"));
@@ -121,14 +123,14 @@ namespace {
     }
 
     TEST(Accessors, GetAsNumericConversion) {
-        auto err = hinder::error().with("count", std::int64_t{100});
+        auto err    = hinder::error().with("count", std::int64_t {100});
         auto as_int = err.get_as<int>("count");
         ASSERT_TRUE(as_int.has_value());
         EXPECT_EQ(*as_int, 100);
     }
 
     TEST(Accessors, GetAsStringConversion) {
-        auto err = hinder::error().with("code", std::int64_t{42});
+        auto err    = hinder::error().with("code", std::int64_t {42});
         auto as_str = err.get_as<std::string>("code");
         ASSERT_TRUE(as_str.has_value());
         EXPECT_EQ(*as_str, "42");
@@ -145,13 +147,10 @@ namespace {
     // ========================================================================
 
     TEST(Iteration, IteratesAllKeys) {
-        auto err = hinder::error()
-            .with("alpha", 1)
-            .with("beta", 2)
-            .with("gamma", 3);
+        auto err = hinder::error().with("alpha", 1).with("beta", 2).with("gamma", 3);
 
         int count = 0;
-        for (auto const& [key, value] : err) {
+        for (auto const & [key, value] : err) {
             (void)key;
             (void)value;
             ++count;
@@ -164,29 +163,27 @@ namespace {
     // ========================================================================
 
     TEST(FailFactory, DefaultTypeNameIsError) {
-        auto builder = hinder::fail();
+        auto builder    = hinder::fail();
         auto unexpected = std::unexpected<hinder::error>(std::move(builder));
         EXPECT_EQ(unexpected.error().type_name(), "error");
     }
 
     TEST(FailFactory, CustomTypeName) {
-        auto builder = hinder::fail("command_error");
+        auto builder    = hinder::fail("command_error");
         auto unexpected = std::unexpected<hinder::error>(std::move(builder));
         EXPECT_EQ(unexpected.error().type_name(), "command_error");
     }
 
     TEST(FailFactory, CapturesSourceLocation) {
-        auto builder = hinder::fail("test");
+        auto builder    = hinder::fail("test");
         auto unexpected = std::unexpected<hinder::error>(std::move(builder));
-        EXPECT_GT(unexpected.error().location().line(), 0u);
+        EXPECT_GT(unexpected.error().location().line(), 0U);
     }
 
     TEST(FailFactory, FluentChaining) {
-        auto builder = hinder::fail("cmd_error")
-            .message("failed: {}", "ls")
-            .with("exit_code", 1);
-        auto unexpected = std::unexpected<hinder::error>(std::move(builder));
-        auto const& err = unexpected.error();
+        auto builder = hinder::fail("cmd_error").message("failed: {}", "ls").with("exit_code", 1);
+        auto unexpected  = std::unexpected<hinder::error>(std::move(builder));
+        auto const & err = unexpected.error();
         EXPECT_EQ(err.type_name(), "cmd_error");
         EXPECT_TRUE(err.contains("message"));
         EXPECT_TRUE(err.contains("exit_code"));
@@ -197,21 +194,21 @@ namespace {
     // ========================================================================
 
     TEST(ImplicitConversion, ConvertsToUnexpected) {
-        std::unexpected<hinder::error> u = hinder::fail("my_error").message("oops");
-        EXPECT_EQ(u.error().type_name(), "my_error");
+        std::unexpected<hinder::error> unexpected_err = hinder::fail("my_error").message("oops");
+        EXPECT_EQ(unexpected_err.error().type_name(), "my_error");
     }
 
     // ========================================================================
     // use in std::expected return types
     // ========================================================================
 
-    auto divide(int a, int b) -> std::expected<int, hinder::error> {
-        if (b == 0) {
+    auto divide(int numerator, int denominator) -> std::expected<int, hinder::error> {
+        if (denominator == 0) {
             return hinder::fail("math_error")
                 .message("division by zero")
-                .with("numerator", a);
+                .with("numerator", numerator);
         }
-        return a / b;
+        return numerator / denominator;
     }
 
     auto greet(std::string_view name) -> std::expected<std::string, hinder::error> {
@@ -258,9 +255,7 @@ namespace {
     }
 
     TEST(Formatting, ToStringContainsKeyValuePairs) {
-        auto err = hinder::error("file_error")
-            .message("not found")
-            .with("path", "/etc/missing");
+        auto err = hinder::error("file_error").message("not found").with("path", "/etc/missing");
         auto str = hinder::to_string(err);
         EXPECT_NE(str.find("message: not found"), std::string::npos);
         EXPECT_NE(str.find("path: /etc/missing"), std::string::npos);
@@ -278,13 +273,13 @@ namespace {
     // ========================================================================
 
     TEST(Formatting, ToJsonContainsType) {
-        auto err = hinder::error("db_error");
+        auto err  = hinder::error("db_error");
         auto json = hinder::to_json(err);
         EXPECT_NE(json.find("\"type\":\"db_error\""), std::string::npos);
     }
 
     TEST(Formatting, ToJsonContainsSource) {
-        auto err = hinder::error("test");
+        auto err  = hinder::error("test");
         auto json = hinder::to_json(err);
         EXPECT_NE(json.find("\"source\""), std::string::npos);
         EXPECT_NE(json.find("\"file\""), std::string::npos);
@@ -292,20 +287,20 @@ namespace {
     }
 
     TEST(Formatting, ToJsonContainsData) {
-        auto err = hinder::error("test").with("code", std::int64_t{42});
+        auto err  = hinder::error("test").with("code", std::int64_t {42});
         auto json = hinder::to_json(err);
         EXPECT_NE(json.find("\"data\""), std::string::npos);
         EXPECT_NE(json.find("\"code\":42"), std::string::npos);
     }
 
     TEST(Formatting, ToJsonNoDataWhenEmpty) {
-        auto err = hinder::error("test");
+        auto err  = hinder::error("test");
         auto json = hinder::to_json(err);
         EXPECT_EQ(json.find("\"data\""), std::string::npos);
     }
 
     TEST(Formatting, ToJsonEscapesStrings) {
-        auto err = hinder::error("test").with("msg", "say \"hello\"");
+        auto err  = hinder::error("test").with("msg", "say \"hello\"");
         auto json = hinder::to_json(err);
         EXPECT_NE(json.find("\\\"hello\\\""), std::string::npos);
     }
@@ -333,8 +328,7 @@ namespace {
 
     TEST(HinderFail, ChainedWithCall) {
         auto result = []() -> std::expected<int, hinder::error> {
-            return HINDER_FAIL("cmd_error", "failed: {}", "ls")
-                .with("exit_code", 1);
+            return HINDER_FAIL("cmd_error", "failed: {}", "ls").with("exit_code", 1);
         }();
         ASSERT_FALSE(result.has_value());
         EXPECT_TRUE(result.error().contains("exit_code"));
@@ -344,7 +338,7 @@ namespace {
         auto result = []() -> std::expected<int, hinder::error> {
             return HINDER_FAIL("test_error", "oops");
         }();
-        EXPECT_GT(result.error().location().line(), 0u);
+        EXPECT_GT(result.error().location().line(), 0U);
     }
 
 }  // namespace

@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::misc
 //
@@ -24,37 +26,36 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_JSON_H
-#define HINDER_JSON_H
-
-#include <hinder/compiler.h>
 #include <format>
-#include <type_traits>
+#include <hinder/compiler.h>
 
 namespace hinder {
 
     template <typename output_t, typename key_t>
-    inline auto json_string_to(output_t it, key_t key, const char * value) -> output_t {
-        return HINDER_UNLIKELY(value == nullptr) ? std::format_to(it, "\"{}\": \"\"", key)
-                                                 : std::format_to(it, "\"{}\": \"{}\"", key, value);
+    auto json_string_to(output_t out, key_t key, const char * value) -> output_t {
+        // clang-format off
+        return HINDER_UNLIKELY(value == nullptr) ? std::format_to(out, R"("{}": "")", key)
+                                                 : std::format_to(out, R"("{}": "{}")", key, value);
+        // clang-format on
     }
 
     template <typename output_t, typename key_t, typename value_t>
-    inline auto json_string_to(output_t it, key_t key, value_t value) -> output_t {
-        return std::format_to(it, "\"{}\": \"{}\"", key, value);
+    auto json_string_to(output_t out, key_t key, value_t value) -> output_t {
+        return std::format_to(out, R"("{}": "{}")", key, value);
     }
 
     template <typename output_t, typename key_t, typename value_t>
-    inline auto json_number_to(output_t it, key_t key, value_t value) -> output_t {
-        return std::format_to(it, "\"{}\": {}", key, value);
+    auto json_number_to(output_t out, key_t key, value_t value) -> output_t {
+        return std::format_to(out, R"("{}": {})", key, value);
     }
 
     template <typename output_t, typename key_t, typename value_t>
-    inline auto json_bool_to(output_t it, key_t key, value_t value) -> output_t {
-        return value ? std::format_to(it, "\"{}\": true", key)
-                     : std::format_to(it, "\"{}\": false", key);
+    auto json_bool_to(output_t out, key_t key, value_t value) -> output_t {
+        // clang-format off
+        return value ? std::format_to(out, R"("{}": true)", key)
+                     : std::format_to(out, R"("{}": false)", key);
+        // clang-format on
     }
 
 }  // namespace hinder
 
-#endif  // HINDER_JSON_H
