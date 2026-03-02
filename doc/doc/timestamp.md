@@ -56,6 +56,11 @@ The format string receives positional arguments in this order:
 A format string for `local_ts` must include all 8 slots (or use positional syntax to skip one).
 Providing fewer than 8 slots means the last slots receive unexpected arguments.
 
+Invalid format strings are caught at construction time — the constructor does a trial call with
+the epoch time point and throws `hinder::generic_error` (with the offending format string
+attached) if formatting fails. This reports the misconfiguration where it was made, not at the
+first `operator()` call.
+
 While you can use `local_timestamp()`, I recommend using UTC for all timestamps/logging. It is
 the one time which is unambiguous and is not subject to daylight savings times or local legislation
 on time zones.
