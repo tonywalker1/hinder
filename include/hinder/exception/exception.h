@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::exception
 //
@@ -24,11 +26,9 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_EXCEPTION_H
-#define HINDER_EXCEPTION_H
-
 #include <cstddef>
 #include <format>
+#include <functional>
 #include <hinder/compiler.h>
 #include <hinder/exception/exception_value.h>
 #include <map>
@@ -39,6 +39,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace hinder {
 
@@ -62,24 +63,24 @@ namespace hinder {
     //
     class exception : public std::runtime_error {
     public:
-        using data_map = std::map<std::string, exception_value, std::less<>>;
+        using data_map       = std::map<std::string, exception_value, std::less<>>;
         using const_iterator = data_map::const_iterator;
 
         explicit exception(std::source_location loc = std::source_location::current());
 
         // Fluent API for adding data (returns exception& for base class)
-        template<typename T>
-        auto with(std::string_view key, T&& value) -> exception& {
+        template <typename T>
+        auto with(std::string_view key, T && value) -> exception & {
             m_data[std::string(key)] = detail::to_exception_value(std::forward<T>(value));
             return *this;
         }
 
         // Flag-style with (key exists, no value)
-        auto with(std::string_view key) -> exception&;
+        auto with(std::string_view key) -> exception &;
 
         // Convenience for the common "message" key
-        template<typename... Args>
-        auto message(std::format_string<Args...> fmt, Args&&... args) -> exception& {
+        template <typename... Args>
+        auto message(std::format_string<Args...> fmt, Args &&... args) -> exception & {
             m_data["message"] = std::format(fmt, std::forward<Args>(args)...);
             return *this;
         }
@@ -89,7 +90,7 @@ namespace hinder {
         [[nodiscard]] auto contains(std::string_view key) const -> bool;
 
         // Typed access with conversion
-        template<typename T>
+        template <typename T>
         [[nodiscard]] auto get_as(std::string_view key) const -> std::optional<T>;
 
         // Iteration over all key-value pairs
@@ -99,10 +100,10 @@ namespace hinder {
 
         // Metadata
         [[nodiscard]] auto type_name() const -> std::string_view;
-        [[nodiscard]] auto location() const -> std::source_location const&;
+        [[nodiscard]] auto location() const -> std::source_location const &;
 
         // std::exception interface
-        [[nodiscard]] auto what() const noexcept -> char const* override;
+        [[nodiscard]] auto what() const noexcept -> char const * override;
 
     protected:
         void set_type_name(std::string_view name);
@@ -112,9 +113,9 @@ namespace hinder {
         void message_impl(std::string msg);
 
     private:
-        std::string m_type_name{"exception"};
+        std::string          m_type_name {"exception"};
         std::source_location m_location;
-        data_map m_data;
+        data_map             m_data;
     };
 
     // ========================================================================
@@ -129,61 +130,67 @@ namespace hinder {
     //   Derived - The concrete exception class (for return type)
     //   Base    - The parent exception class to inherit from
     //
-    template<typename Derived, typename Base>
+    template <typename Derived, typename Base>
     class exception_crtp : public Base {
-    public:
-        explicit exception_crtp(std::source_location loc = std::source_location::current())
-            : Base(loc) {}
+        friend Derived;  // allows Derived to call the private constructor
 
+    public:
         // Fluent API returning Derived& to preserve type through chaining
-        template<typename T>
-        auto with(std::string_view key, T&& value) -> Derived& {
+        template <typename T>
+        auto with(std::string_view key, T && value) -> Derived & {
             Base::with_impl(key, detail::to_exception_value(std::forward<T>(value)));
-            return static_cast<Derived&>(*this);
+            return static_cast<Derived &>(*this);
         }
 
         // Flag-style with (key exists, no value)
-        auto with(std::string_view key) -> Derived& {
-            Base::with_impl(key, std::monostate{});
-            return static_cast<Derived&>(*this);
+        auto with(std::string_view key) -> Derived & {
+            Base::with_impl(key, std::monostate {});
+            return static_cast<Derived &>(*this);
         }
 
         // Convenience for the common "message" key
-        template<typename... Args>
-        auto message(std::format_string<Args...> fmt, Args&&... args) -> Derived& {
+        template <typename... Args>
+        auto message(std::format_string<Args...> fmt, Args &&... args) -> Derived & {
             Base::message_impl(std::format(fmt, std::forward<Args>(args)...));
-            return static_cast<Derived&>(*this);
+            return static_cast<Derived &>(*this);
         }
+
+    private:
+        explicit exception_crtp(std::source_location loc = std::source_location::current())
+        : Base(loc) {}
     };
 
     // ========================================================================
     // get_as implementation (needs full exception definition)
     // ========================================================================
 
-    template<typename T>
+    template <typename T>
     auto exception::get_as(std::string_view key) const -> std::optional<T> {
-        auto it = m_data.find(key);
-        if (it == m_data.end()) {
+        auto iter = m_data.find(key);
+        if (iter == m_data.end()) {
             return std::nullopt;
         }
 
-        return std::visit([](auto const& val) -> std::optional<T> {
-            using val_type = std::remove_cvref_t<decltype(val)>;
+        return std::visit(
+            [](auto const & val) -> std::optional<T> {
+                using val_type = std::remove_cvref_t<decltype(val)>;
 
-            if constexpr (std::is_same_v<val_type, std::monostate>) {
-                return std::nullopt;
-            } else if constexpr (std::is_same_v<T, val_type>) {
-                return val;
-            } else if constexpr (std::is_same_v<T, std::string>) {
-                // Convert anything to string
-                return value_to_string(val);
-            } else if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<val_type>) {
-                // Allow numeric conversions
-                return static_cast<T>(val);
-            } else {
-                return std::nullopt;
-            }
-        }, it->second);
+                // NOLINTNEXTLINE(bugprone-branch-clone)
+                if constexpr (std::is_same_v<val_type, std::monostate>) {
+                    return std::nullopt;
+                } else if constexpr (std::is_same_v<T, val_type>) {
+                    return val;
+                } else if constexpr (std::is_same_v<T, std::string>) {
+                    // Convert anything to string
+                    return value_to_string(val);
+                } else if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<val_type>) {
+                    // Allow numeric conversions
+                    return static_cast<T>(val);
+                } else {
+                    return std::nullopt;
+                }
+            },
+            iter->second);
     }
 
 }  // namespace hinder
@@ -201,14 +208,16 @@ namespace hinder {
 //       .message("Something failed")
 //       .with("code", 42);  // Still throws my_error, not exception
 //
-#define HINDER_DEFINE_EXCEPTION(name, base)                                             \
-    class name : public hinder::exception_crtp<name, base> {                            \
-    public:                                                                             \
-        explicit name(std::source_location loc = std::source_location::current())       \
-            : hinder::exception_crtp<name, base>(loc) {                                 \
-            set_type_name(#name);                                                       \
-        }                                                                               \
+// NOLINTBEGIN(bugprone-macro-parentheses): arguments are type names; parenthesizing is invalid
+#define HINDER_DEFINE_EXCEPTION(name, base)                                       \
+    class name : public hinder::exception_crtp<name, base> {                      \
+    public:                                                                       \
+        explicit name(std::source_location loc = std::source_location::current()) \
+        : hinder::exception_crtp<name, base>(loc) {                               \
+            set_type_name(#name);                                                 \
+        }                                                                         \
     }
+// NOLINTEND(bugprone-macro-parentheses)
 
 namespace hinder {
 
@@ -221,7 +230,8 @@ namespace hinder {
     HINDER_DEFINE_EXCEPTION(generic_error, exception);
 
     //
-    // Used by the assert module when using throw_assert_handler, see hinder/assert/handlers/throw.h.
+    // Used by the assert module when using throw_assert_handler, see
+    // hinder/assert/handlers/throw.h.
     //
     HINDER_DEFINE_EXCEPTION(assertion_error, generic_error);
 
@@ -237,8 +247,9 @@ namespace hinder {
 //       .message("Failed to open file")
 //       .with("path", filename);
 //
-#define HINDER_THROW(except) \
-    throw except(std::source_location::current())
+// NOLINTBEGIN(cppcoreguidelines-macro-usage): takes a type name; cannot be a function
+#define HINDER_THROW(except) throw except(std::source_location::current())
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 //
 // Contract checking macros.
@@ -255,23 +266,23 @@ namespace hinder {
 //   // Throws with: condition="ptr != nullptr", check_type="precondition"
 //
 
-#define HINDER_EXPECTS(cond, except) \
-    HINDER_LIKELY(cond) ? HINDER_NOOP : \
-        throw except(std::source_location::current()) \
-            .with("condition", #cond) \
-            .with("check_type", "precondition")
+#define HINDER_EXPECTS(cond, except)                                    \
+    HINDER_LIKELY(cond) ? HINDER_NOOP                                   \
+                        : throw except(std::source_location::current()) \
+                              .with("condition", #cond)                 \
+                              .with("check_type", "precondition")
 
-#define HINDER_ENSURES(cond, except) \
-    HINDER_LIKELY(cond) ? HINDER_NOOP : \
-        throw except(std::source_location::current()) \
-            .with("condition", #cond) \
-            .with("check_type", "postcondition")
+#define HINDER_ENSURES(cond, except)                                    \
+    HINDER_LIKELY(cond) ? HINDER_NOOP                                   \
+                        : throw except(std::source_location::current()) \
+                              .with("condition", #cond)                 \
+                              .with("check_type", "postcondition")
 
-#define HINDER_INVARIANT(cond, except) \
-    HINDER_LIKELY(cond) ? HINDER_NOOP : \
-        throw except(std::source_location::current()) \
-            .with("condition", #cond) \
-            .with("check_type", "invariant")
+#define HINDER_INVARIANT(cond, except)                                  \
+    HINDER_LIKELY(cond) ? HINDER_NOOP                                   \
+                        : throw except(std::source_location::current()) \
+                              .with("condition", #cond)                 \
+                              .with("check_type", "invariant")
 
 //
 // Debug-only assertion macro.
@@ -289,16 +300,18 @@ namespace hinder {
 //   HINDER_ASSERT(ptr != nullptr, "pointer must not be null");
 //   HINDER_ASSERT(x > 0, "x={} must be positive", x);
 //
+// NOLINTBEGIN(cppcoreguidelines-macro-usage): requires #cond stringification and NDEBUG conditional
 #ifdef NDEBUG
     #define HINDER_ASSERT(cond, ...) ((void)(0))
 #else
-    #define HINDER_ASSERT(cond, ...) \
-        HINDER_LIKELY(cond) ? HINDER_NOOP : \
-            throw ::hinder::assertion_error(std::source_location::current()) \
-                .with("condition", #cond) \
-                .with("check_type", "assertion") \
-                .message(__VA_ARGS__)
+    #define HINDER_ASSERT(cond, ...)                                                           \
+        HINDER_LIKELY(cond) ? HINDER_NOOP                                                      \
+                            : throw ::hinder::assertion_error(std::source_location::current()) \
+                                  .with("condition", #cond)                                    \
+                                  .with("check_type", "assertion")                             \
+                                  .message(__VA_ARGS__)
 #endif
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 namespace hinder {
 
@@ -311,7 +324,7 @@ namespace hinder {
     //     path: /etc/config.json
     //     errno: 2
     //
-    [[nodiscard]] auto to_string(exception const& exc) -> std::string;
+    [[nodiscard]] auto to_string(exception const & exc) -> std::string;
 
     //
     // JSON format for structured logging.
@@ -319,8 +332,7 @@ namespace hinder {
     // Example output:
     //   {"type":"file_error","source":{"file":"/src/main.cpp","line":42},...}
     //
-    [[nodiscard]] auto to_json(exception const& exc) -> std::string;
+    [[nodiscard]] auto to_json(exception const & exc) -> std::string;
 
 }  // namespace hinder
 
-#endif  // HINDER_EXCEPTION_H

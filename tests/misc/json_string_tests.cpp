@@ -24,9 +24,13 @@
 // SOFTWARE.
 //
 
-#include <gtest/gtest.h>
-#include <hinder/json.h>
+#include <iterator>
 #include <string>
+#include <string_view>
+
+#include <gtest/gtest.h>
+#include <hinder/compiler.h>
+#include <hinder/json.h>
 
 using namespace hinder;
 
@@ -52,34 +56,34 @@ TEST(Json, OrdinaryCharPtrString) {
 }
 
 TEST(Json, EmptyStdString) {
-    std::string msg;
-    auto        out  = std::back_inserter(msg);
-    std::string data = "";
+    std::string       msg;
+    auto              out = std::back_inserter(msg);
+    const std::string data;
     json_string_to(out, "key", data);
     EXPECT_EQ(msg, "\"key\": \"\"");
 }
 
 TEST(Json, OrdinaryStdString) {
-    std::string msg;
-    auto        out  = std::back_inserter(msg);
-    std::string data = "some ordinary string";
+    std::string       msg;
+    auto              out  = std::back_inserter(msg);
+    const std::string data = "some ordinary string";
     json_string_to(out, "key", data);
     EXPECT_EQ(msg, "\"key\": \"some ordinary string\"");
 }
 
 #if defined(__cplusplus) && (__cplusplus >= HINDER_CPP_17)
 TEST(Json, EmptyStdStringView) {
-    std::string      msg;
-    auto             out  = std::back_inserter(msg);
-    std::string_view data = "";
+    std::string            msg;
+    auto                   out = std::back_inserter(msg);
+    const std::string_view data {};
     json_string_to(out, "key", data);
     EXPECT_EQ(msg, "\"key\": \"\"");
 }
 
 TEST(Json, OrdinaryStdStringView) {
-    std::string      msg;
-    auto             out  = std::back_inserter(msg);
-    std::string_view data = "some ordinary string";
+    std::string            msg;
+    auto                   out  = std::back_inserter(msg);
+    const std::string_view data = "some ordinary string";
     json_string_to(out, "key", data);
     EXPECT_EQ(msg, "\"key\": \"some ordinary string\"");
 }

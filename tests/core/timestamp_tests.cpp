@@ -39,7 +39,7 @@ TEST(Timestamp, UtcTimestampWithDefaultISOFormat) {
     auto ymd = 2'021y / April / 14d;
     auto tp  = sys_days {ymd} + 14h + 41min + 26s + 833'393'854ns;
 
-    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format, tp);
+    auto result = hinder::utc_ts{}(tp);
 
     ASSERT_EQ(result, "2021-04-14T14:41:26.833393854Z");
 }
@@ -49,8 +49,8 @@ TEST(Timestamp, UtcTimestampWithCustomFormat) {
     auto ymd = 2'023y / December / 25d;
     auto tp  = sys_days {ymd} + 8h + 30min + 0s + 123'456'789ns;
 
-    auto config = hinder::utc_timestamp_config {"{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}"};
-    auto result = hinder::utc_timestamp(config, tp);
+    auto config = hinder::utc_ts {"{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}"};
+    auto result = config(tp);
 
     ASSERT_EQ(result, "2023/12/25 08:30:00");
 }
@@ -60,7 +60,7 @@ TEST(Timestamp, UtcTimestampWithLeapYearDate) {
     auto ymd = 2'024y / February / 29d;
     auto tp  = sys_days {ymd} + 23h + 59min + 59s + 999'999'999ns;
 
-    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format, tp);
+    auto result = hinder::utc_ts{}(tp);
 
     ASSERT_EQ(result, "2024-02-29T23:59:59.999999999Z");
 }
@@ -69,7 +69,7 @@ TEST(Timestamp, UtcTimestampWithEpochTime) {
     // Test with Unix epoch: 1970-01-01 00:00:00.000000000 UTC
     auto tp = system_clock::time_point {};
 
-    auto result = hinder::utc_timestamp(hinder::utc_timestamp_config::iso_format, tp);
+    auto result = hinder::utc_ts{}(tp);
 
     ASSERT_EQ(result, "1970-01-01T00:00:00.000000000Z");
 }
@@ -79,9 +79,9 @@ TEST(Timestamp, UtcTimestampWithInvalidFormatString) {
     auto tp  = sys_days {ymd} + 14h + 41min + 26s;
 
     // Format string expects more arguments than provided
-    auto config = hinder::utc_timestamp_config {"{} {} {} {} {} {} {} {}"};
+    auto config = hinder::utc_ts {"{} {} {} {} {} {} {} {}"};
 
-    ASSERT_THROW(auto tmpval = hinder::utc_timestamp(config, tp), std::format_error);
+    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
 }
 
 TEST(Timestamp, UtcTimestampWithMismatchedFormatSpecifiers) {
@@ -89,9 +89,9 @@ TEST(Timestamp, UtcTimestampWithMismatchedFormatSpecifiers) {
     auto tp  = sys_days {ymd} + 14h + 41min + 26s;
 
     // Format string expects string but gets integer
-    auto config = hinder::utc_timestamp_config {"{:s}"};
+    auto config = hinder::utc_ts {"{:s}"};
 
-    ASSERT_THROW(auto tmpval = hinder::utc_timestamp(config, tp), std::format_error);
+    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
 }
 
 TEST(Timestamp, LocalTimestampWithDefaultISOFormatUsingCurrentTimezone) {
@@ -99,7 +99,7 @@ TEST(Timestamp, LocalTimestampWithDefaultISOFormatUsingCurrentTimezone) {
     auto ymd = 2'021y / April / 14d;
     auto tp  = sys_days {ymd} + 14h + 41min + 26s + 833'393'854ns;
 
-    auto result = hinder::local_timestamp(hinder::local_timestamp_config::iso_format, tp);
+    auto result = hinder::local_ts{}(tp);
 
     // Result should contain the timestamp and timezone name
     // We can't predict the exact timezone, but we can verify the format structure
@@ -113,9 +113,9 @@ TEST(Timestamp, LocalTimestampWithUTCTimezone) {
     auto ymd = 2'022y / June / 15d;
     auto tp  = sys_days {ymd} + 10h + 30min + 45s + 500'000'000ns;
 
-    auto config = hinder::local_timestamp_config {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
-                                                  locate_zone("UTC")};
-    auto result = hinder::local_timestamp(config, tp);
+    auto config = hinder::local_ts {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
+                                    locate_zone("UTC")};
+    auto result = config(tp);
 
     // UTC timezone canonical name is "Etc/UTC"
     ASSERT_EQ(result, "2022-06-15T10:30:45.500000000 Etc/UTC");
@@ -127,9 +127,9 @@ TEST(Timestamp, LocalTimestampWithAmericaNewYorkTimezone) {
     auto ymd = 2'021y / July / 4d;
     auto tp  = sys_days {ymd} + 12h + 0min + 0s;
 
-    auto config = hinder::local_timestamp_config {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
-                                                  locate_zone("America/New_York")};
-    auto result = hinder::local_timestamp(config, tp);
+    auto config = hinder::local_ts {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
+                                    locate_zone("America/New_York")};
+    auto result = config(tp);
 
     // EDT is UTC-4 during summer, so 12:00 UTC = 08:00 EDT
     ASSERT_EQ(result, "2021-07-04T08:00:00.000000000 America/New_York");
@@ -141,9 +141,9 @@ TEST(Timestamp, LocalTimestampWithEuropeBerlinTimezone) {
     auto ymd = 2'021y / January / 15d;
     auto tp  = sys_days {ymd} + 12h + 0min + 0s;
 
-    auto config = hinder::local_timestamp_config {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
-                                                  locate_zone("Europe/Berlin")};
-    auto result = hinder::local_timestamp(config, tp);
+    auto config = hinder::local_ts {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
+                                    locate_zone("Europe/Berlin")};
+    auto result = config(tp);
 
     // CET is UTC+1 during winter, so 12:00 UTC = 13:00 CET
     ASSERT_EQ(result, "2021-01-15T13:00:00.000000000 Europe/Berlin");
@@ -153,10 +153,9 @@ TEST(Timestamp, LocalTimestampWithCustomFormat) {
     auto ymd = 2'023y / November / 11d;
     auto tp  = sys_days {ymd} + 15h + 45min + 30s;
 
-    auto config =
-        hinder::local_timestamp_config {"{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}.{:09d} {}",
-                                        locate_zone("UTC")};
-    auto result = hinder::local_timestamp(config, tp);
+    auto config = hinder::local_ts {"{:04d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}.{:09d} {}",
+                                    locate_zone("UTC")};
+    auto result = config(tp);
 
     // UTC timezone canonical name is "Etc/UTC"
     ASSERT_EQ(result, "2023/11/11 15:45:30.000000000 Etc/UTC");
@@ -167,9 +166,9 @@ TEST(Timestamp, LocalTimestampWithInvalidFormatString) {
     auto tp  = sys_days {ymd} + 14h + 41min + 26s;
 
     // Format string expects more arguments than provided
-    auto config = hinder::local_timestamp_config {"{} {} {} {} {} {} {} {} {}", locate_zone("UTC")};
+    auto config = hinder::local_ts {"{} {} {} {} {} {} {} {} {}", locate_zone("UTC")};
 
-    ASSERT_THROW(auto tmpval = hinder::local_timestamp(config, tp), std::format_error);
+    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
 }
 
 TEST(Timestamp, LocalTimestampWithMismatchedFormatSpecifiers) {
@@ -177,15 +176,15 @@ TEST(Timestamp, LocalTimestampWithMismatchedFormatSpecifiers) {
     auto tp  = sys_days {ymd} + 14h + 41min + 26s;
 
     // Format string expects string but gets integer
-    auto config = hinder::local_timestamp_config {"{:s}", locate_zone("UTC")};
+    auto config = hinder::local_ts {"{:s}", locate_zone("UTC")};
 
-    ASSERT_THROW(auto tmpval = hinder::local_timestamp(config, tp), std::format_error);
+    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
 }
 
 TEST(Timestamp, UtcTimestampUsesCurrentTimeWhenCalledWithNoTimeArgument) {
     // Call without time argument - should use current time
-    auto result1 = hinder::utc_timestamp();
-    auto result2 = hinder::utc_timestamp();
+    auto result1 = hinder::utc_timestamp()();
+    auto result2 = hinder::utc_timestamp()();
 
     // Both should be valid ISO format strings
     ASSERT_NE(result1.find('T'), std::string::npos);
@@ -201,8 +200,8 @@ TEST(Timestamp, UtcTimestampUsesCurrentTimeWhenCalledWithNoTimeArgument) {
 
 TEST(Timestamp, LocalTimestampUsesCurrentTimeWhenCalledWithNoTimeArgument) {
     // Call without time argument - should use current time
-    auto result1 = hinder::local_timestamp();
-    auto result2 = hinder::local_timestamp();
+    auto result1 = hinder::local_timestamp()();
+    auto result2 = hinder::local_timestamp()();
 
     // Both should be valid ISO format strings with timezone
     ASSERT_NE(result1.find('T'), std::string::npos);

@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::core
 //
@@ -23,8 +25,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-
-#ifndef HINDER_PLATFORM_H
-#define HINDER_PLATFORM_H
-
-#endif  // HINDER_PLATFORM_H

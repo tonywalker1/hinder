@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::exception
 //
@@ -24,9 +26,6 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_EXCEPTION_VALUE_H
-#define HINDER_EXCEPTION_VALUE_H
-
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -40,47 +39,46 @@ namespace hinder {
     // Supported value types for exception key-value storage.
     // Covers the most common use cases while keeping the type system simple.
     //
-    using exception_value = std::variant<
-        std::monostate,      // key exists, no value (flag)
-        bool,
-        std::int64_t,
-        std::uint64_t,
-        double,
-        std::string
-    >;
+    using exception_value = std::variant<std::monostate,  // key exists, no value (flag)
+                                         bool,
+                                         std::int64_t,
+                                         std::uint64_t,
+                                         double,
+                                         std::string>;
 
     //
     // Convert an exception_value to a string representation.
     //
-    [[nodiscard]] auto value_to_string(exception_value const& v) -> std::string;
+    [[nodiscard]] auto value_to_string(exception_value const & val) -> std::string;
 
     namespace detail {
 
         // Type trait to detect string-like types.
         // Uses std::decay_t which converts arrays to pointers.
-        template<typename T>
+        template <typename T>
         struct is_string_like : std::false_type {};
 
-        template<>
+        template <>
         struct is_string_like<std::string> : std::true_type {};
 
-        template<>
+        template <>
         struct is_string_like<std::string_view> : std::true_type {};
 
-        template<>
-        struct is_string_like<char const*> : std::true_type {};
+        template <>
+        struct is_string_like<char const *> : std::true_type {};
 
-        template<>
-        struct is_string_like<char*> : std::true_type {};
+        template <>
+        struct is_string_like<char *> : std::true_type {};
 
-        template<typename T>
+        template <typename T>
         inline constexpr bool is_string_like_v = is_string_like<std::decay_t<T>>::value;
 
         // Convert arbitrary types to exception_value.
-        template<typename T>
-        auto to_exception_value(T&& value) -> exception_value {
+        template <typename T>
+        auto to_exception_value(T && value) -> exception_value {
             using decayed = std::decay_t<T>;
 
+            // NOLINTNEXTLINE(bugprone-branch-clone)
             if constexpr (std::is_same_v<decayed, bool>) {
                 return value;
             } else if constexpr (std::is_same_v<std::remove_cvref_t<T>, std::monostate>) {
@@ -95,8 +93,8 @@ namespace hinder {
                 return static_cast<std::uint64_t>(value);
             } else {
                 static_assert(std::is_same_v<decayed, void>,
-                    "Unsupported type for with(). "
-                    "Supported types: bool, integers, floating point, strings.");
+                              "Unsupported type for with(). "
+                              "Supported types: bool, integers, floating point, strings.");
             }
         }
 
@@ -104,4 +102,3 @@ namespace hinder {
 
 }  // namespace hinder
 
-#endif  // HINDER_EXCEPTION_VALUE_H

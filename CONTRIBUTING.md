@@ -59,7 +59,7 @@ This project requires **C++23** as the minimum standard.
 
 - **Headers**: `include/hinder/<module>/`
 - **Implementation**: `src/<module>/`
-- **Tests**: `tests/<module>/` using Catch2 framework
+- **Tests**: `tests/<module>/` using Google Test framework
 - **Documentation**: `doc/doc/<module>.md`
 
 ### Testing

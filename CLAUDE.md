@@ -101,21 +101,21 @@ The project is organized into independent modules under `src/` and `include/hind
 - `exception` - Depends on `core`
 - `misc` - Minimal dependencies (mostly header-only)
 
-### Configurable Utility Pattern
+### Functor/Closure Pattern
 
-When implementing utilities with optional configuration (like `utc_timestamp()` and
-`local_timestamp()`):
+When implementing utilities with optional configuration (like `utc_ts` and `local_ts`):
 
-- **Provide zero-overhead defaults**: Use static const config objects as default parameters
+- **Callable objects own their config**: Construct with format string and optional timezone;
+  `operator()` produces the string on demand.
 - **Resolve optional parameters at call time**: For values that might change (like timezone from
-  environment), store `nullptr` in config and resolve to actual value in the function body. This
+  environment), store `nullptr` in the object and resolve to actual value in `operator()`. This
   handles environment changes and avoids static initialization order issues.
-- **Thread safety**: No mutable globals. All configuration passes through const parameters.
-- **API simplicity**: Default arguments preserve simple `function()` call syntax while allowing
-  `function(custom_config)` when needed.
+- **Thread safety**: No mutable globals. All configuration is captured at construction as const.
+- **API simplicity**: Free functions return references to function-local static default instances,
+  preserving simple `utc_timestamp()()` call syntax while allowing `utc_ts{fmt}` for custom ones.
 
-Example: `timestamp.h` config types with `iso_format` static defaults, timezone nullptr resolved to
-`current_zone()` at call time.
+Example: `timestamp.h` `utc_ts`/`local_ts` with nullptr timezone resolved to `current_zone()` at
+call time; `utc_timestamp()`/`local_timestamp()` return `const&` to default instances.
 
 ### External Dependencies
 

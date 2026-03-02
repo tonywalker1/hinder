@@ -24,50 +24,48 @@
 // SOFTWARE.
 //
 
+#include <hinder/exception/exception_value.h>
 #include <hinder/expected/error.h>
+
+#include <cstddef>
+#include <optional>
+#include <source_location>
+#include <string>
+#include <string_view>
+#include <variant>
 
 namespace hinder {
 
     error::error(std::string_view type_name, std::source_location loc)
-        : m_type_name(type_name)
-        , m_location(loc) {}
+    : m_type_name(type_name),
+      m_location(loc) {}
 
-    auto error::with(std::string_view key) -> error& {
-        m_data[std::string(key)] = std::monostate{};
+    auto error::with(std::string_view key) -> error & {
+        m_data[std::string(key)] = std::monostate {};
         return *this;
     }
 
     auto error::get(std::string_view key) const -> std::optional<exception_value> {
-        auto it = m_data.find(key);
-        if (it == m_data.end()) {
+        auto iter = m_data.find(key);
+        if (iter == m_data.end()) {
             return std::nullopt;
         }
-        return it->second;
+        return iter->second;
     }
 
     auto error::contains(std::string_view key) const -> bool {
         return m_data.find(key) != m_data.end();
     }
 
-    auto error::begin() const -> const_iterator {
-        return m_data.begin();
-    }
+    auto error::begin() const -> const_iterator { return m_data.begin(); }
 
-    auto error::end() const -> const_iterator {
-        return m_data.end();
-    }
+    auto error::end() const -> const_iterator { return m_data.end(); }
 
-    auto error::size() const -> std::size_t {
-        return m_data.size();
-    }
+    auto error::size() const -> std::size_t { return m_data.size(); }
 
-    auto error::type_name() const -> std::string_view {
-        return m_type_name;
-    }
+    auto error::type_name() const -> std::string_view { return m_type_name; }
 
-    auto error::location() const -> std::source_location const& {
-        return m_location;
-    }
+    auto error::location() const -> std::source_location const & { return m_location; }
 
     auto fail(std::string_view type_name, std::source_location loc) -> error_builder {
         return error_builder(error(type_name, loc));

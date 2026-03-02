@@ -24,6 +24,8 @@
 // SOFTWARE.
 //
 
+#include <cstddef>
+
 #include <gtest/gtest.h>
 #include <hinder/units.h>
 
@@ -32,18 +34,18 @@ using namespace hinder;
 TEST(Units, SpecifyingAMemoryBlock) {
     // trivial, but let's check anyway
     size_t block = 1;
-    EXPECT_EQ(KiB(1), block * 1024);
-    EXPECT_EQ(MiB(1), block * 1024 * 1024);
-    EXPECT_EQ(GiB(1), block * 1024 * 1024 * 1024);
-    EXPECT_EQ(TiB(1), block * 1024 * 1024 * 1024 * 1024);
+    EXPECT_EQ(KiB(1), block * 1'024);
+    EXPECT_EQ(MiB(1), block * 1'024 * 1'024);
+    EXPECT_EQ(GiB(1), block * 1'024 * 1'024 * 1'024);
+    EXPECT_EQ(TiB(1), block * 1'024 * 1'024 * 1'024 * 1'024);
 
     block = 4;
-    EXPECT_EQ(KiB(4), block * 1024);
-    EXPECT_EQ(MiB(4), block * 1024 * 1024);
-    EXPECT_EQ(GiB(4), block * 1024 * 1024 * 1024);
-    EXPECT_EQ(TiB(4), block * 1024 * 1024 * 1024 * 1024);
+    EXPECT_EQ(KiB(4), block * 1'024);
+    EXPECT_EQ(MiB(4), block * 1'024 * 1'024);
+    EXPECT_EQ(GiB(4), block * 1'024 * 1'024 * 1'024);
+    EXPECT_EQ(TiB(4), block * 1'024 * 1'024 * 1'024 * 1'024);
 
-    EXPECT_EQ(MiB(4), KiB(4) * 1024);
-    EXPECT_EQ(GiB(4), MiB(4) * 1024);
-    EXPECT_EQ(TiB(4), GiB(4) * 1024);
+    EXPECT_EQ(MiB(4), KiB(4) * 1'024);
+    EXPECT_EQ(GiB(4), MiB(4) * 1'024);
+    EXPECT_EQ(TiB(4), GiB(4) * 1'024);
 }

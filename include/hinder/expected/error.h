@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // hinder::error
 //
@@ -24,12 +26,10 @@
 // SOFTWARE.
 //
 
-#ifndef HINDER_EXPECTED_ERROR_H
-#define HINDER_EXPECTED_ERROR_H
-
 #include <cstddef>
 #include <expected>
 #include <format>
+#include <functional>
 #include <hinder/exception/exception_value.h>
 #include <map>
 #include <optional>
@@ -38,6 +38,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace hinder {
 
@@ -58,25 +59,25 @@ namespace hinder {
     //
     class error {
     public:
-        using data_map = std::map<std::string, exception_value, std::less<>>;
+        using data_map       = std::map<std::string, exception_value, std::less<>>;
         using const_iterator = data_map::const_iterator;
 
-        explicit error(std::string_view type_name = "error",
-                       std::source_location loc = std::source_location::current());
+        explicit error(std::string_view     type_name = "error",
+                       std::source_location loc       = std::source_location::current());
 
         // Fluent API — mirrors hinder::exception
-        template<typename T>
-        auto with(std::string_view key, T&& value) -> error& {
+        template <typename T>
+        auto with(std::string_view key, T && value) -> error & {
             m_data[std::string(key)] = detail::to_exception_value(std::forward<T>(value));
             return *this;
         }
 
         // Flag-style with (key exists, no value)
-        auto with(std::string_view key) -> error&;
+        auto with(std::string_view key) -> error &;
 
         // Convenience for the common "message" key
-        template<typename... Args>
-        auto message(std::format_string<Args...> fmt, Args&&... args) -> error& {
+        template <typename... Args>
+        auto message(std::format_string<Args...> fmt, Args &&... args) -> error & {
             m_data["message"] = std::format(fmt, std::forward<Args>(args)...);
             return *this;
         }
@@ -85,7 +86,7 @@ namespace hinder {
         [[nodiscard]] auto get(std::string_view key) const -> std::optional<exception_value>;
         [[nodiscard]] auto contains(std::string_view key) const -> bool;
 
-        template<typename T>
+        template <typename T>
         [[nodiscard]] auto get_as(std::string_view key) const -> std::optional<T>;
 
         // Iteration over all key-value pairs
@@ -95,12 +96,12 @@ namespace hinder {
 
         // Metadata
         [[nodiscard]] auto type_name() const -> std::string_view;
-        [[nodiscard]] auto location() const -> std::source_location const&;
+        [[nodiscard]] auto location() const -> std::source_location const &;
 
     private:
-        std::string m_type_name;
+        std::string          m_type_name;
         std::source_location m_location;
-        data_map m_data;
+        data_map             m_data;
     };
 
     // ========================================================================
@@ -121,35 +122,35 @@ namespace hinder {
     public:
         explicit error_builder(error err) noexcept : m_error(std::move(err)) {}
 
-        template<typename T>
-        auto with(std::string_view key, T&& value) -> error_builder& {
+        template <typename T>
+        auto with(std::string_view key, T && value) -> error_builder & {
             m_error.with(key, std::forward<T>(value));
             return *this;
         }
 
-        auto with(std::string_view key) -> error_builder& {
+        auto with(std::string_view key) -> error_builder & {
             m_error.with(key);
             return *this;
         }
 
-        template<typename... Args>
-        auto message(std::format_string<Args...> fmt, Args&&... args) -> error_builder& {
+        template <typename... Args>
+        auto message(std::format_string<Args...> fmt, Args &&... args) -> error_builder & {
             m_error.message(fmt, std::forward<Args>(args)...);
             return *this;
         }
 
+        // NOLINTBEGIN(hicpp-explicit-conversions): intentional implicit conversions for fluent API
         // Implicit conversion to std::unexpected<error>
-        operator std::unexpected<error>() {
-            return std::unexpected(std::move(m_error));
-        }
+        operator std::unexpected<error>() { return std::unexpected(std::move(m_error)); }
 
         // Implicit conversion to std::expected<T, error> for any value type T.
         // Avoids requiring two user-defined conversions (error_builder ->
         // std::unexpected -> std::expected), which C++ disallows in implicit sequences.
-        template<typename T>
+        template <typename T>
         operator std::expected<T, error>() {
             return std::expected<T, error>(std::unexpect, std::move(m_error));
         }
+        // NOLINTEND(hicpp-explicit-conversions)
 
     private:
         error m_error;
@@ -168,8 +169,8 @@ namespace hinder {
     //       .message("Failed to execute: {}", command)
     //       .with("exit_code", code);
     //
-    [[nodiscard]] auto fail(std::string_view type_name = "error",
-                            std::source_location loc = std::source_location::current())
+    [[nodiscard]] auto fail(std::string_view     type_name = "error",
+                            std::source_location loc       = std::source_location::current())
         -> error_builder;
 
     //
@@ -180,7 +181,7 @@ namespace hinder {
     //     message: Failed to execute: ls
     //     exit_code: 1
     //
-    [[nodiscard]] auto to_string(error const& err) -> std::string;
+    [[nodiscard]] auto to_string(error const & err) -> std::string;
 
     //
     // JSON format for structured logging.
@@ -188,34 +189,37 @@ namespace hinder {
     // Example output:
     //   {"type":"command_error","source":{"file":"/src/main.cpp","line":42},...}
     //
-    [[nodiscard]] auto to_json(error const& err) -> std::string;
+    [[nodiscard]] auto to_json(error const & err) -> std::string;
 
     // ========================================================================
     // get_as implementation (needs full error definition)
     // ========================================================================
 
-    template<typename T>
+    template <typename T>
     auto error::get_as(std::string_view key) const -> std::optional<T> {
-        auto it = m_data.find(key);
-        if (it == m_data.end()) {
+        auto iter = m_data.find(key);
+        if (iter == m_data.end()) {
             return std::nullopt;
         }
 
-        return std::visit([](auto const& val) -> std::optional<T> {
-            using val_type = std::remove_cvref_t<decltype(val)>;
+        return std::visit(
+            [](auto const & val) -> std::optional<T> {
+                using val_type = std::remove_cvref_t<decltype(val)>;
 
-            if constexpr (std::is_same_v<val_type, std::monostate>) {
-                return std::nullopt;
-            } else if constexpr (std::is_same_v<T, val_type>) {
-                return val;
-            } else if constexpr (std::is_same_v<T, std::string>) {
-                return value_to_string(val);
-            } else if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<val_type>) {
-                return static_cast<T>(val);
-            } else {
-                return std::nullopt;
-            }
-        }, it->second);
+                // NOLINTNEXTLINE(bugprone-branch-clone)
+                if constexpr (std::is_same_v<val_type, std::monostate>) {
+                    return std::nullopt;
+                } else if constexpr (std::is_same_v<T, val_type>) {
+                    return val;
+                } else if constexpr (std::is_same_v<T, std::string>) {
+                    return value_to_string(val);
+                } else if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<val_type>) {
+                    return static_cast<T>(val);
+                } else {
+                    return std::nullopt;
+                }
+            },
+            iter->second);
     }
 
 }  // namespace hinder
@@ -237,7 +241,7 @@ namespace hinder {
 //   return HINDER_FAIL("command_error", "Failed to execute: {}", command)
 //       .with("exit_code", code);
 //
-#define HINDER_FAIL(type, fmt, ...) \
-    hinder::fail(type).message(fmt __VA_OPT__(,) __VA_ARGS__)
+// NOLINTBEGIN(cppcoreguidelines-macro-usage): variadic format wrapper; __VA_OPT__ requires macro
+#define HINDER_FAIL(type, fmt, ...) hinder::fail(type).message(fmt __VA_OPT__(, ) __VA_ARGS__)
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
-#endif  // HINDER_EXPECTED_ERROR_H
