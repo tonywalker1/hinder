@@ -150,59 +150,13 @@ command_error @/src/main.cpp:42
 }
 ```
 
-## API Reference
+## Design Notes
 
-### `hinder::error`
+**`to_json` omits `"data"` when the error has no key-value pairs.** An error constructed with
+only a type name produces `{"type":"...","source":{...}}` — no `"data"` field. This keeps the
+JSON compact for simple error signals.
 
-Plain value type. Copyable, movable, not derived from `std::exception`.
-
-| Member | Description |
-|--------|-------------|
-| `error(type_name, loc)` | Construct with type name and source location |
-| `message(fmt, args...)` | Set the "message" key using std::format syntax |
-| `with(key, value)` | Store a typed value (bool, int, double, string) |
-| `with(key)` | Store a flag key (key present, no value) |
-| `get(key)` | Returns `std::optional<exception_value>` |
-| `get_as<T>(key)` | Returns `std::optional<T>` with numeric/string conversion |
-| `contains(key)` | Returns `bool` |
-| `type_name()` | Returns the error type string |
-| `location()` | Returns `std::source_location const&` |
-| `size()` | Number of key-value pairs stored |
-| `begin()` / `end()` | Const iteration over key-value pairs |
-
-Supported value types for `with()`: `bool`, any integer (stored as `int64_t` or `uint64_t`),
-`double`, `std::string`, `std::string_view`, `char const*`.
-
-### `hinder::error_builder`
-
-Returned by `hinder::fail()`. Proxies `error`'s fluent API and implicitly converts to
-`std::unexpected<error>` or `std::expected<T, error>` on return.
-
-### `hinder::fail(type_name, loc)`
-
-Factory function. Captures source location at the call site via the default parameter.
-Returns `error_builder` for fluent chaining.
-
-### `HINDER_FAIL(type, fmt, ...)`
-
-Macro combining type name and formatted message in one expression. Equivalent to:
-
-```c++
-hinder::fail(type).message(fmt, ...)
-```
-
-Returns `error_builder` — chainable with `.with()`.
-
-### `hinder::to_string(error const&)`
-
-Returns a human-readable multi-line string:
-
-```
-type_name @file:line
-  key: value
-  flag_key
-```
-
-### `hinder::to_json(error const&)`
-
-Returns a single-line JSON string with `"type"`, `"source"`, and optional `"data"` fields.
+**Source location is captured at the `fail()` call site, not at the `error` constructor.**
+The second parameter of `hinder::fail()` is a `std::source_location` default parameter — never
+pass it explicitly. If you construct `hinder::error` directly, source location is captured at
+the `error(...)` call site.
