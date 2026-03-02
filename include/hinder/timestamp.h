@@ -28,7 +28,6 @@
 
 #include <chrono>
 #include <string>
-#include <utility>
 
 namespace hinder {
 
@@ -36,57 +35,49 @@ namespace hinder {
     // Get the current time (UTC or any timezone) as a formatted string.
     //
     // The default format is:
-    //       utc_timestamp():  "2021-04-14T14:41:26.833393854Z"
-    //     local_timestamp():  "2021-04-14T10:41:26.833393854Z America/New_York"
+    //       utc_timestamp()():  "2021-04-14T14:41:26.833393854Z"
+    //     local_timestamp()():  "2021-04-14T10:41:26.833393854 America/New_York"
     //
-    // To customize the format or timezone, create a config object:
-    //     auto berlin_config = local_timestamp_config{
-    //         "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d} {}",
-    //         std::chrono::locate_zone("Europe/Berlin")
-    //     };
-    //     auto ts = local_timestamp(berlin_config);
+    // utc_ts and local_ts are callable objects (functors) that capture their format
+    // and timezone at construction and produce strings on demand:
+    //     utc_timestamp()();                    // default format, current time
+    //     utc_timestamp()(test_time);           // default format, explicit time (for testing)
+    //
+    //     auto berlin = local_ts{fmt, std::chrono::locate_zone("Europe/Berlin")};
+    //     berlin();                             // custom zone, current time
+    //     berlin(test_time);                    // custom zone, explicit time
     //
     // These are convenience functions that probably should only be used for error/log messages.
     //
 
-    class utc_timestamp_config {
+    class utc_ts {
     public:
-        explicit utc_timestamp_config(std::string fmt) : m_format(std::move(fmt)) {}
+        explicit utc_ts(std::string fmt = "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z");
 
-        [[nodiscard]] auto format() const -> std::string const & { return m_format; }
-
-        [[nodiscard]] static auto iso_format() -> utc_timestamp_config const &;
+        [[nodiscard]] auto operator()(
+            std::chrono::system_clock::time_point now = std::chrono::system_clock::now()) const
+            -> std::string;
 
     private:
         std::string m_format;
     };
 
-    class local_timestamp_config {
+    class local_ts {
     public:
-        explicit local_timestamp_config(std::string                    fmt,
-                                        const std::chrono::time_zone * zone = nullptr)
-        : m_format(std::move(fmt)),
-          m_timezone(zone) {}
+        explicit local_ts(
+            std::string                    fmt  = "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
+            const std::chrono::time_zone * zone = nullptr);
 
-        [[nodiscard]] auto format() const -> std::string const & { return m_format; }
-        [[nodiscard]] auto timezone() const -> const std::chrono::time_zone * { return m_timezone; }
-
-        [[nodiscard]] static auto iso_format() -> local_timestamp_config const &;
+        [[nodiscard]] auto operator()(
+            std::chrono::system_clock::time_point now = std::chrono::system_clock::now()) const
+            -> std::string;
 
     private:
         std::string                    m_format;
         const std::chrono::time_zone * m_timezone;
     };
 
-    [[nodiscard]] auto
-        utc_timestamp(const utc_timestamp_config & config       = utc_timestamp_config::iso_format(),
-                      std::chrono::system_clock::time_point now = std::chrono::system_clock::now())
-            -> std::string;
-
-    [[nodiscard]] auto local_timestamp(
-        const local_timestamp_config &        config = local_timestamp_config::iso_format(),
-        std::chrono::system_clock::time_point now    = std::chrono::system_clock::now())
-        -> std::string;
+    [[nodiscard]] auto utc_timestamp() -> utc_ts const &;
+    [[nodiscard]] auto local_timestamp() -> local_ts const &;
 
 }  // namespace hinder
-

@@ -28,28 +28,22 @@
 
 #include <chrono>
 #include <format>
+#include <string>
+#include <utility>
 
 namespace hinder {
 
-    // iso_format accessors: function-local statics initialized on first call.
-    // Exceptions propagate to the caller rather than calling std::terminate().
-    auto utc_timestamp_config::iso_format() -> utc_timestamp_config const & {
-        static const utc_timestamp_config instance {"{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d}Z"};
-        return instance;
-    }
+    // Constructors: capture format string (and optional timezone) at construction.
+    // Default instances use function-local statics; exceptions propagate to the caller
+    // rather than calling std::terminate().
 
-    auto local_timestamp_config::iso_format() -> local_timestamp_config const & {
-        static const local_timestamp_config instance {
-            "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:09d} {}",
-            nullptr  // Resolved to std::chrono::current_zone() at call time
-        };
-        return instance;
-    }
+    utc_ts::utc_ts(std::string fmt) : m_format(std::move(fmt)) {}
 
-    // Function implementations
-    auto utc_timestamp(const utc_timestamp_config &                config,
-                       const std::chrono::system_clock::time_point now) -> std::string {
+    local_ts::local_ts(std::string fmt, const std::chrono::time_zone * zone)
+    : m_format(std::move(fmt)),
+      m_timezone(zone) {}
 
+    auto utc_ts::operator()(const std::chrono::system_clock::time_point now) const -> std::string {
         // break into ymd and time-of-day
         // NOLINTNEXTLINE(misc-include-cleaner): std::chrono::days is in <chrono>
         auto day_pt = std::chrono::floor<std::chrono::days>(now);
@@ -66,16 +60,15 @@ namespace hinder {
         auto subseconds = tod.subseconds().count();
 
         return std::vformat(
-            config.format(),
+            m_format,
             std::make_format_args(year, month, day, hours, minutes, seconds, subseconds));
     }
 
-    auto local_timestamp(const local_timestamp_config &              config,
-                         const std::chrono::system_clock::time_point now) -> std::string {
+    auto local_ts::operator()(const std::chrono::system_clock::time_point now) const
+        -> std::string {
         // current time in desired time zone
         // Resolve nullptr to current_zone() at call time (handles TZ environment changes)
-        const auto * zone  = config.timezone() != nullptr ? config.timezone()
-                                                         : std::chrono::current_zone();
+        const auto * zone  = m_timezone != nullptr ? m_timezone : std::chrono::current_zone();
         auto         local = std::chrono::zoned_time(zone, now);
 
         // break into ymd and time-of-day
@@ -95,8 +88,18 @@ namespace hinder {
         auto tz_name    = local.get_time_zone()->name();
 
         return std::vformat(
-            config.format(),
+            m_format,
             std::make_format_args(year, month, day, hours, minutes, seconds, subseconds, tz_name));
+    }
+
+    auto utc_timestamp() -> utc_ts const & {
+        static const utc_ts instance {};
+        return instance;
+    }
+
+    auto local_timestamp() -> local_ts const & {
+        static const local_ts instance {};
+        return instance;
     }
 
 }  // namespace hinder
