@@ -24,6 +24,7 @@
 // SOFTWARE.
 //
 
+#include <hinder/exception/exception.h>
 #include <hinder/timestamp.h>
 
 #include <chrono>
@@ -75,23 +76,13 @@ TEST(Timestamp, UtcTimestampWithEpochTime) {
 }
 
 TEST(Timestamp, UtcTimestampWithInvalidFormatString) {
-    auto ymd = 2'021y / April / 14d;
-    auto tp  = sys_days {ymd} + 14h + 41min + 26s;
-
-    // Format string expects more arguments than provided
-    auto config = hinder::utc_ts {"{} {} {} {} {} {} {} {}"};
-
-    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
+    // Format string expects more arguments than provided — caught at construction
+    ASSERT_THROW(hinder::utc_ts {"{} {} {} {} {} {} {} {}"}, hinder::generic_error);
 }
 
 TEST(Timestamp, UtcTimestampWithMismatchedFormatSpecifiers) {
-    auto ymd = 2'021y / April / 14d;
-    auto tp  = sys_days {ymd} + 14h + 41min + 26s;
-
-    // Format string expects string but gets integer
-    auto config = hinder::utc_ts {"{:s}"};
-
-    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
+    // Format string uses wrong specifier type — caught at construction
+    ASSERT_THROW(hinder::utc_ts {"{:s}"}, hinder::generic_error);
 }
 
 TEST(Timestamp, LocalTimestampWithDefaultISOFormatUsingCurrentTimezone) {
@@ -162,23 +153,14 @@ TEST(Timestamp, LocalTimestampWithCustomFormat) {
 }
 
 TEST(Timestamp, LocalTimestampWithInvalidFormatString) {
-    auto ymd = 2'021y / April / 14d;
-    auto tp  = sys_days {ymd} + 14h + 41min + 26s;
-
-    // Format string expects more arguments than provided
-    auto config = hinder::local_ts {"{} {} {} {} {} {} {} {} {}", locate_zone("UTC")};
-
-    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
+    // Format string expects more arguments than provided — caught at construction
+    ASSERT_THROW((hinder::local_ts {"{} {} {} {} {} {} {} {} {}", locate_zone("UTC")}),
+                 hinder::generic_error);
 }
 
 TEST(Timestamp, LocalTimestampWithMismatchedFormatSpecifiers) {
-    auto ymd = 2'021y / April / 14d;
-    auto tp  = sys_days {ymd} + 14h + 41min + 26s;
-
-    // Format string expects string but gets integer
-    auto config = hinder::local_ts {"{:s}", locate_zone("UTC")};
-
-    ASSERT_THROW(auto tmpval = config(tp), std::format_error);
+    // Format string uses wrong specifier type — caught at construction
+    ASSERT_THROW((hinder::local_ts {"{:s}", locate_zone("UTC")}), hinder::generic_error);
 }
 
 TEST(Timestamp, UtcTimestampUsesCurrentTimeWhenCalledWithNoTimeArgument) {

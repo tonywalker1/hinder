@@ -47,6 +47,10 @@ namespace hinder {
     //     berlin();                             // custom zone, current time
     //     berlin(test_time);                    // custom zone, explicit time
     //
+    // The format string is validated at construction by doing a trial call with the
+    // epoch time point. An invalid format string throws hinder::generic_error rather
+    // than deferring the error to the first operator() call.
+    //
     // These are convenience functions that probably should only be used for error/log messages.
     //
 

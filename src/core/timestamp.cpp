@@ -28,20 +28,40 @@
 
 #include <chrono>
 #include <format>
+#include <hinder/exception/exception.h>
 #include <string>
 #include <utility>
 
 namespace hinder {
 
     // Constructors: capture format string (and optional timezone) at construction.
-    // Default instances use function-local statics; exceptions propagate to the caller
-    // rather than calling std::terminate().
+    // Validate the format string eagerly by doing a trial call with the epoch time
+    // point (discarding the result). This reports misconfiguration at the point where
+    // the bad format string is used to construct the object, not at the first call to
+    // operator(). Default instances use function-local statics; exceptions propagate
+    // to the caller rather than calling std::terminate().
 
-    utc_ts::utc_ts(std::string fmt) : m_format(std::move(fmt)) {}
+    utc_ts::utc_ts(std::string fmt) : m_format(std::move(fmt)) {
+        try {
+            static_cast<void>((*this)(std::chrono::system_clock::time_point {}));
+        } catch (const std::format_error & e) {
+            HINDER_THROW(generic_error)
+                .message("invalid utc_ts format string: {}", e.what())
+                .with("format", m_format);
+        }
+    }
 
     local_ts::local_ts(std::string fmt, const std::chrono::time_zone * zone)
     : m_format(std::move(fmt)),
-      m_timezone(zone) {}
+      m_timezone(zone) {
+        try {
+            static_cast<void>((*this)(std::chrono::system_clock::time_point {}));
+        } catch (const std::format_error & e) {
+            HINDER_THROW(generic_error)
+                .message("invalid local_ts format string: {}", e.what())
+                .with("format", m_format);
+        }
+    }
 
     auto utc_ts::operator()(const std::chrono::system_clock::time_point now) const -> std::string {
         // break into ymd and time-of-day
