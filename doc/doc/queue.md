@@ -127,13 +127,6 @@ monotonically increasing clock is essential for blocking operations: if the syst
 jumps backward (e.g., NTP correction, DST), a `system_clock`-based timeout could block
 indefinitely or return immediately. `steady_clock` is immune to such adjustments.
 
-### Why `pop_copy()` was dropped
-
-The original queue had both `pop()` (move) and `pop_copy()` (copy). With `std::optional<T>`
-as the return type, the caller decides what to do with the returned value. If `T` is copyable
-and the caller wants a copy, they copy from `*result`. The separate `pop_copy()` method added
-complexity without improving the interface.
-
 ### Thread safety of `size()` and `empty()`
 
 `size()` and `empty()` are intentionally unlocked. Taking a lock inside these methods gives
