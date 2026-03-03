@@ -26,4 +26,7 @@
 * **[timestamp](./doc/timestamp.md):** Produce the current time as an ISO formatted string.
   Perfect for error/log messages.
 
+* **[queue](./doc/queue.md):** Generic bounded, thread-safe MPMC queue. Supports any
+  move-constructible type, configurable capacity, and timed push/pop operations.
+
 * **[units](./doc/units.md):** Useful conversions (KiB, MiB, GiB, TiB).

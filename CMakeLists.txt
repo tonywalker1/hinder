@@ -78,5 +78,6 @@ if (HINDER_WITH_TESTS)
     add_subdirectory(tests/exception)
     add_subdirectory(tests/expected)
     add_subdirectory(tests/misc)
+    add_subdirectory(tests/queue)
 endif ()
 
