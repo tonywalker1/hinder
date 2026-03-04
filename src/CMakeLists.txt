@@ -42,8 +42,12 @@ target_include_directories(hinder
 install(TARGETS hinder
     EXPORT hinderTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT devel
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT runtime
+        NAMELINK_COMPONENT devel
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT runtime
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
@@ -51,6 +55,7 @@ install(TARGETS hinder
 install(
     DIRECTORY ${PROJECT_SOURCE_DIR}/include/hinder
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    COMPONENT devel
 )
 
 ################################################################################
@@ -62,6 +67,7 @@ install(EXPORT hinderTargets
     FILE hinderTargets.cmake
     NAMESPACE hinder::
     DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
+    COMPONENT devel
 )
 
 # Generate package config file
@@ -83,4 +89,5 @@ install(
         "${CMAKE_CURRENT_BINARY_DIR}/hinderConfig.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/hinderConfigVersion.cmake"
     DESTINATION ${HINDER_CMAKE_CONFIG_DIR}
+    COMPONENT devel
 )

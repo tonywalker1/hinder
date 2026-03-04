@@ -4,6 +4,7 @@
 
 * **[CMake Options:](doc/cmake_options.md)** Set various build options.
 * **[Dependencies:](./doc/dependencies.md)** Everything you need to build this library.
+* **[Packaging:](./doc/packaging.md)** Build and install RPM and DEB system packages.
 
 ## Overviews/Tutorials
 
