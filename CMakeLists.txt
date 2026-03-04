@@ -81,3 +81,4 @@ if (HINDER_WITH_TESTS)
     add_subdirectory(tests/queue)
 endif ()
 
+include(cmake/packaging.cmake)
